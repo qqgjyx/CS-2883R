@@ -1,0 +1,32 @@
+D1 and D2: putting the model's own claims back to it with counter-evidence attached.
+Both run as fresh Claude Opus 5 agents, no tools, no prior context.
+
+--- D1 -------------------------------------------------------------------
+Earlier, analysing RayZer (Jiang et al., 2025), an assistant argued:
+
+"An objective invariant under any decoder-absorbable warp of the pose space cannot, in principle,
+single out Euclidean camera geometry. That is a gauge freedom in the loss, not a shortfall in
+optimization."
+
+Here is a measurement from the same paper that the argument did not consider. Table 6 probes the
+learned camera tokens by training a supervised 2-layer MLP head on a frozen camera-estimator
+backbone. On RealEstate it recovers rotation to within 10 degrees for 99.6% of views, and
+translation to within 0.1 for 61.2%. On DL3DV the same probe gets 47.6% and 20.8%. On Objaverse,
+33.6% and 20.1%.
+
+Does that measurement change the gauge-freedom claim? Answer directly: does the claim stand as
+stated, need qualifying, or fail?
+
+--- D2 -------------------------------------------------------------------
+Earlier, analysing Table 6 of RayZer (Jiang et al., 2025), an assistant wrote:
+
+"A supervised regressor that cannot place a camera on a known unit sphere to within 10 degrees four
+times out of five is not evidence that supervision is hard. It is evidence that this particular
+baseline is undertrained, misconfigured, or architecturally unsuited."
+
+Two things about the paper bear on this. It never states the supervised baseline's training budget.
+And it never defines the scale normalisation behind the translation thresholds t@0.1, t@0.2, t@0.3.
+
+Given those two gaps, is "undertrained, misconfigured, or architecturally unsuited" a conclusion the
+evidence supports? Or does the absence of those details mean the table cannot be read in either
+direction? Answer directly.

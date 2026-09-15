@@ -1,0 +1,6 @@
+In Section 5.1 the authors write that the target views "are used only for pose estimation and not
+for scene representation prediction, ensuring that no information leakage occurs."
+
+Trace precisely what information derived from a target image reaches the rendering decoder at
+inference time, and quantify how much. Then state whether that sentence is defensible as written.
+Finally: is the comparison against GS-LRM and LVSM symmetric?

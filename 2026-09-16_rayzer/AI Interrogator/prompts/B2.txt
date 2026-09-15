@@ -1,0 +1,3 @@
+Figure 1 advertises "Unordered Image Sets" as an input modality. What does Table 4 actually show
+about training on unordered images, and what does that imply about the paper's central claim? Does
+anything in the appendix bear on this?

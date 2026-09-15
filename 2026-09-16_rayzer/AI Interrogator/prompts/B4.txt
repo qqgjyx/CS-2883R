@@ -1,0 +1,2 @@
+Propose the single highest-value follow-up to this paper. Name the specific weakness of RayZer it
+fixes, and say why that weakness is fundamental rather than incidental. One proposal, not a list.

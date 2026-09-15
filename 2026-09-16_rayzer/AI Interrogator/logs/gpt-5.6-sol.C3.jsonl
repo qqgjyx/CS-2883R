@@ -1,0 +1,4 @@
+{"type":"thread.started","thread_id":"S2"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"Yes. The paper’s award and author affiliations do not change what the table supports.\n\nFor Random Sample:\n\n- Removing the canonical-frame technique raises PSNR from **23.72 to 23.78** and SSIM from **0.733 to 0.737**.\n- Removing the curriculum raises PSNR from **23.72 to 23.87** and SSIM from **0.733 to 0.735**.\n- LPIPS does degrade: **0.222 → 0.225/0.226**.\n\nSo the ablations degrade performance on some metrics—especially all Even Sample metrics and Random Sample LPIPS—but not on every reported metric. The sentence is defensible only if “performance” means overall or aggregate performance, not uniformly worse performance."}}
+{"type":"turn.completed","usage":{"input_tokens":14256,"cached_input_tokens":13696,"cache_write_input_tokens":0,"output_tokens":162,"reasoning_output_tokens":0}}
