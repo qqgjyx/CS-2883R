@@ -2,7 +2,10 @@
 
 CS 2883R, 16 Sep 2026. Juntang Wang.
 
-Open **`AI Interrogator.pdf`**. `AI Interrogator.html` is the same thing, live.
+Open **`AI Interrogator - Juntang Wang.pdf`**, 13 pages.
+`AI Interrogator - Juntang Wang.html` is the same thing, live in a browser.
+
+The files carry my name so a second Interrogator can drop theirs in this folder without a collision.
 
 The role asks for the prompts and the responses, so both are here in full rather than as excerpts.
 
