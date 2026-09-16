@@ -1,0 +1,783 @@
+Source: RayZer: A Self-supervised Large View Synthesis Model.
+Jiang, Tan, Wang, Jin, Zhao, Bi, Zhang, Luan, Sunkavalli, Huang, Pavlakos.
+arXiv:2505.00702v1, 1 May 2025.  https://arxiv.org/abs/2505.00702
+ICCV 2025, Best Student Paper Honorable Mention.
+
+Text extracted with pdftotext for the CS 2883R open-book interrogation runs. All content below
+is the authors' work, reproduced here only as course reading material.
+
+=== RayZer (arXiv 2505.00702v1) - MAIN BODY, pp. 1-8 ===
+                                                                 RayZer: A Self-supervised Large View Synthesis Model
+
+                                                      Hanwen Jiang1 Hao Tan2 Peng Wang2 Haian Jin3 Yue Zhao1 Sai Bi2
+                                                 Kai Zhang2 Fujun Luan2 Kalyan Sunkavalli2 Qixing Huang1 Georgios Pavlakos1
+                                                                      1
+                                                                          The University of Texas at Austin 2 Adobe Research 3 Cornell University
+
+                                                                 Rendered Novel Views          GS-LRM           LVSM           RayZer               GT         NVS PSNR
+                                          Unlabeled Data
+                                                                                                                                                                              RayZer
+
+
+
+
+arXiv:2505.00702v1 [cs.CV] 1 May 2025
+                                            Video Frames                                                                                                                          24.36
+
+                                                                                                                                                                      LVSM
+                                                                                                                                                            GS-LRM
+                                                                                                                                                                      23.69
+                                                                                                                                                             23.49
+
+
+                                                                                                                                                                      DL3DV
+                                                                                                                                                                     DL3DV
+                                                                                                                                                                                  RayZer
+                                         Unordered Image Sets                                                                                                         LVSM
+                                                                                                                                                                                  27.48
+                                                                                                                                                                      27.00
+
+                                                                                                                                                            GS-LRM
+                                                                                                                                                             24.25
+
+
+
+                                                                                                                                                                     RealEstate
+                                                                                                                                                                     DL3DV
+                                        Figure 1. We propose RayZer, a self-supervised multi-view 3D Vision model trained on unlabeled data without any annotations, e.g.,
+                                        camera pose labels. At inference, RayZer supports feed-forward novel view synthesis from unposed & uncalibrated images. RayZer
+                                        achieves novel view synthesis performance comparable to that of supervised “oracle” methods (GS-LRM and LVSM), which require camera
+                                        labels in both training and inference, and even outperforms them when they rely on (potentially noisy) COLMAP camera annotations. We
+                                        show two examples on the right, where COLMAP camera annotations lead to consistent failures of GS-LRM and LVSM during inference.
+
+                                                                 Abstract                                      and fueled by the scaling law [38]. This paradigm has proven
+                                                                                                               highly effective for LLMs [60], VLMs [2], and visual gener-
+                                        We present RayZer, a self-supervised multi-view 3D Vision              ation [56]. In contrast, 3D Vision models still rely heavily on
+                                        model trained without any 3D supervision, i.e., camera poses           ground-truth 3D geometry and camera pose labels [28, 77],
+                                        and scene geometry, while exhibiting emerging 3D aware-                which are usually estimated from time-consuming optimiza-
+                                        ness. Concretely, RayZer takes unposed and uncalibrated                tion methods, e.g., COLMAP [65], and are not always per-
+                                        images as input, recovers camera parameters, reconstructs              fect. This reliance limits both learning scalability and effec-
+                                        a scene representation, and synthesizes novel views. During            tiveness. To break free from this constraint, we move beyond
+                                        training, RayZer relies solely on its self-predicted camera            the supervised paradigm and ask: how far can we push a 3D
+                                        poses to render target views, eliminating the need for any             Vision model without any 3D supervision?
+                                        ground-truth camera annotations and allowing RayZer to be
+                                                                                                                   In this paper, we present RayZer, a large multi-view 3D
+                                        trained with 2D image supervision. The emerging 3D aware-
+                                                                                                               model trained with self-supervision and exhibiting emerg-
+                                        ness of RayZer is attributed to two key factors. First, we de-
+                                                                                                               ing 3D awareness. The input of RayZer is unposed and
+                                        sign a self-supervised framework, which achieves 3D-aware
+                                                                                                               uncalibrated multi-view images, sampled from continuous
+                                        auto-encoding of input images by disentangling camera and
+                                                                                                               video frames or unordered multi-view captures. RayZer
+                                        scene representations. Second, we design a transformer-
+                                                                                                               first recovers the camera parameters, then reconstructs the
+                                        based model in which the only 3D prior is the ray struc-
+                                                                                                               scene representation, and finally renders novel views. The
+                                        ture, connecting camera, pixel, and scene simultaneously.
+                                                                                                               key insight of our self-supervised training is to use the cam-
+                                        RayZer demonstrates comparable or even superior novel
+                                                                                                               era poses predicted by RayZer itself to render views that
+                                        view synthesis performance than “oracle” methods that rely
+                                                                                                               provide photometric supervision, rather than following the
+                                        on pose annotations in both training and testing. Project:
+                                                                                                               standard protocol of using ground truth poses for render-
+                                        https://hwjiang1510.github.io/RayZer/
+                                                                                                               ing [29, 74, 92]. Thus, RayZer can be trained with zero 3D
+                                                                                                               supervision, i.e., no 3D geometry or camera pose supervi-
+                                        1. Introduction                                                        sion. During inference, RayZer predicts camera and scene
+                                        Self-supervised learning has driven the rise of foundation             representations in a feed-forward manner, without requiring
+                                        models, enabling training on vast amounts of unlabeled data            per-scene optimization. We show inference results in Fig. 1.
+
+
+                                                                                                           1
+    As RayZer uses the camera poses predicted by itself for                  Images                Representations                Output
+training, this self-supervised task can be interpreted as 3D-           ℐ𝓐                             Scene                     Zero 3D
+aware image auto-encoding [41, 61, 95]. Initially, RayZer                                                                       Supervision
+                                                                                                                                (camera, scene)
+disentangles input images into camera parameters and scene                                                                      for training!
+representations (reconstruction). It then re-entangles these
+predicted representations back into images (rendering). To
+                                                                                                                                Rendered ℐ#𝓑
+                                                                                        Encoders                      Decoder
+facilitate this disentanglement, we control the information
+flow. As shown in Fig. 2, we divide all images into two parts:          ℐ𝓑                            Cameras
+one set predicts the scene representation (input views), while
+the other offers photometric self-supervision (target views).
+This is achieved by using estimated poses of the second set
+to render the scene representation predicted from the first set,
+                                                                                                       ℒ(ℐ𝓑, ℐ'𝓑)
+thereby preventing trivial solutions that are not 3D-aware.
+    To facilitate self-supervised learning, RayZer is built only       Figure 2. Our proposed self-supervised training framework.
+with transformers – no 3D representation, hand-crafted ren-            This is an abstract design that we later operationalize with our
+                                                                       RayZer model (illustrated in Fig. 3 and Sec. 4). We divide the input
+dering equation, or 3D-informed architectures. This design
+                                                                       images into two sets IA and IB . We predict the scene represen-
+is motivated by self-supervised large models in other modal-           tation from IA , and use the predicted cameras of IB (shown in
+ities [2, 6, 56], enabling RayZer to flexibly and effectively          orange) to render the scene. We leverage photometric loss between
+learn domain-specific knowledge. The only 3D prior incorpo-            raw input IB and its prediction ÎB for training.
+rated in RayZer is the ray structure, which simultaneously
+models the relationship between camera, pixels (image), and            replace 3D representations and physical rendering equations
+scene. Concretely, RayZer first predicts camera poses, which           with latent representations and learned rendering functions,
+are then converted into pixel-aligned Plücker ray maps [57]            improving performance and scalability. However, they still
+to guide the scene reconstruction that follows. This ray-              require ground-truth camera poses for supervised training
+based representation serves as a strong prior for addressing           and/or accurate camera annotations during inference. To
+the chicken-and-egg problem of structure and motion [68],              achieve scalable supervised learning, MegaSynth [32] and
+effectively allowing the camera and scene representations to           Stereo4D [34] leverage synthetic data and stereo videos to
+regularize each other during training.                                 expand the data scale, however, curating data for different
+    We evaluate RayZer on three datasets, including both               tasks can be laborious. In contrast, RayZer explores self-
+scene-level and object-level data with different camera con-           supervised training to break free from supervised learning.
+figurations. We observe that RayZer demonstrates compara-
+                                                                       Self-supervised 3D Representation Learning. Learning
+ble or even better novel view synthesis performance than
+                                                                       3D-aware representations from unlabeled image data is a
+“oracle” methods [33, 91] that use pose labels in both training
+                                                                       long-standing problem in 3D Vision. One line of work lever-
+and testing. Interestingly, we identify that potentially noisy
+                                                                       ages single-view images. However, they either only work
+pose annotations from COLMAP can limit the performance
+                                                                       for a specific category [7, 37, 47, 52, 53, 82] or can only
+of “oracle” models. The results not only demonstrate the
+                                                                       recover partial observations [8, 64, 81]. Some works ex-
+effectiveness of RayZer, but also shows the potential of 3D
+                                                                       plore semi-supervised learning and achieve better scalabil-
+Vision models to break free from supervised learning.
+                                                                       ity [30, 84], but performance is still highly restricted to the
+                                                                       model weights, which are initialized by fully supervised
+2. Related Work                                                        training [85]. The most relevant work is self-supervised
+Large-scale 3D Vision Models. 3D Vision models learn                   learning from multi-view images [69, 79, 80]. For exam-
+3D representations and priors from data [15, 23, 39, 58,               ple, Zhou et al. [95], Lai et al. [41], and their following
+59, 71, 72, 93, 94]. Recently, researchers have developed              works [21, 87] use camera motion as 2D or 3D warping
+large-scale models to acquire general 3D knowledge. One                operations to regularize learning. However, this strong in-
+research direction focuses on designing improved model                 ductive bias limits the learning effectiveness. RUST [63] is
+architectures that incorporate the inductive biases of multi-          a pioneering work in learning latent scene representations
+view stereo [10, 14, 75, 86] and epipolar geometry [9, 13,             from unposed imagery. RayZer is different in three aspects.
+19, 25]. Another line of work leverages full transformer               First, RayZer initially estimates camera poses and uses poses
+models that intentionally omit architectural 3D inductive              to condition the following latent reconstruction. In contrast,
+biases [29, 54, 62]. For example, LEAP [29], LRMs [28,                 RUST operates in an inverse pipeline – it first reconstructs
+74, 78, 91, 98], and DUSt3R [20, 43, 76, 77, 83] are the               the scene and then estimates the camera poses. Second,
+first works employing transformers to convert 2D images                RayZer employs different explicit pose representations to
+into 3D representations. SRT [62] and LVSM [33] further                improve information disentanglement and 3D awareness, en-
+
+
+                                                                   2
+abling novel view synthesis by geometrically interpolating                    4. RayZer
+predicted poses. Instead, RUST uses a latent pose represen-
+tation, which makes scene-pose disentanglement challeng-                      In this section, we first introduce RayZer’s self-supervised
+ing and they are not explicitly 3D-aware. Third, RayZer                       learning framework (Sec. 4.1). Then, we present the details
+follows the model architecture of LVSM [33] using pure                        of the RayZer model architecture (Sec. 4.2).
+self-attention in transformers, which is different from RUST
+                                                                              4.1. RayZer’s Self-supervised Learning
+that follows SRT using convolution and cross-attention.
+Optimization-based Unsupervised SfM, SLAM, and NVS.                           We first formulate the input and output of RayZer. We then
+Although these methods are not directly comparable to                         introduce the self-supervised learning framework.
+RayZer, we discuss them due to the similar input-output                           We focus on the standard setting of modeling static
+formulations. In detail, these methods optimize target predic-                scenes [65]. The input of RayZer is a set of unposed and
+tions on a per-scene basis [65, 67], while RayZer is a feed-                  uncalibrated multi-view images I = {Ii ∈ RH×W ×3 |i =
+forward parametrized model, learning priors by training on                    1, ..., K}, which can come from unlabeled video frames or
+large data. The traditional SfM, SLAM, and NVS methods                        image sets. The output is a parametrization of the inputs,
+are unsupervised [26, 65]. Although generally performing                      i.e., camera intrinsics, per-view camera poses, and scene
+well, they are restricted by the complicated hand-crafted                     representation, enabling novel view synthesis. To predict
+workflow, leading to requirements of dense-view inputs [89],                  these representations, we build the RayZer model and train
+slow speed [65], and sensitivity to hyper-parameters [70].                    it with self-supervised learning – no 3D supervision, i.e., 3D
+Recent optimization-based NeRF and 3DGS works can also                        geometry, and camera pose annotations during training.
+perform NVS from unposed images [4, 22, 48, 66]. How-                             To train RayZer with self-supervision, we control the
+ever, they do not have learnable model parameters to encode                   data information flow. We split the input images I into two
+priors, thus requiring off-the-shelf models trained with 3D                   non-overlapping subsets IA and IB , where IA ∪ IB = I
+supervision as regularization or providing initialization.                    and IA ∩ IB = ∅. RayZer uses IA to predict the scene
+                                                                              representation, and use IB for providing supervision. Thus,
+3. Preliminaries                                                              RayZer renders images that correspond to IB , denoted as
+                                                                              ÎB , and we apply photometric losses:
+We introduce two important building blocks of RayZer, i.e.,
+the latent set scene representation and how to render it.                                 1 X
+Latent set scene representation. Compressing data into                             L=                 ˆ + λ · Percep(I, I)),
+                                                                                              (MSE(I, I)                ˆ                (1)
+                                                                                         KB
+tokens in latent space is a common practice in text, im-                                      ˆ
+                                                                                              I∈ÎB
+age, video, etc. Recently, this representation has also been
+extended to 3D research [33, 62, 63, 88]. In contrast to clas-                where KB = |IB | is the size (number of images) of IB ,
+sical explicit (e.g., meshes and point clouds), implicit (e.g.,               I ∈ IB is the image that corresponds to a predicted image
+NeRF [51] and SDF [55]), and hybrid (e.g., triplane [8] and                   ˆ
+                                                                              I, and λ is the weight for perceptual loss [35, 46]. The two
+3DGS [40]) representations that are 3D-aware, the latent                      sets are randomly sampled during training.
+set representation is not explicitly 3D-aware. It serves as a
+compression of scene information, where the 3D-awareness                      4.2. RayZer Model
+properties are fully learned. The latent set scene representa-                Overview. As introduced in Sec. 4.1, RayZer recovers both
+tion can be denoted as z ∈ Rn×d , where n is the number of                    camera parameters and the scene representation from un-
+tokens in the set and d is the latent feature dimension.                      posed, uncalibrated input images. A key design element
+Rendering latent set scene representation requires a net-                     of RayZer is its cascaded prediction of camera and scene
+work, say Rθ , as introduced by SRT [62] and LVSM [33].                       representations. This is motivated by the fact that even noisy
+We formulate it as v = Rθ (z, r), where r is a ray and v is the               cameras can be a strong condition for better scene reconstruc-
+rendered property, e.g., RGB values, of the corresponding                     tion [31, 65, 92], which is analogous to traditional structure-
+pixel1 . This formulation is the same as traditional Graph-                   from-motion methods [65] and is in contrast with recent
+ics rendering techniques [1, 36], as v = R(SCENE, RAY),                       reconstruction-first methods [63, 74, 77]. This design can
+where R is a pre-defined and handcrafted rendering equa-                      provide mutual regularization of predicting pose and scene
+tion, e.g., alpha-blending ray marching in NeRF. Differently,                 during training, facilitating self-supervised learning.
+our “rendering equation” is a learned model parameterized                        RayZer builds a pure transformer-based model, benefit-
+with weights θ, and our scene representation is a latent token                ing from its scalability and flexibility. As shown in Fig. 3,
+set as discussed previously. We omit the model parametriza-                   RayZer first tokenizes input images and uses a transformer-
+tion, e.g., weight θ, in the following description for clarity.               based encoder to predict camera parameters of all views. In
+   1 For improved efficiency and performance, LVSM groups rays from the       this step, the cameras are represented by their intrinsics and
+same image patch and decodes them jointly.                                    SE(3) camera poses. This low-dimensional, geometri-
+
+
+                                                                          3
+         Camera Estimation                                             Latent Scene Reconstruction                                              Rendering (Training)
+                                            Predicted Plücker   Predicted ℛ𝓐 & Input ℐ𝓐                                        Predicted Plücker
+All Images ℐ          Camera                   Ray Maps ℛ                                          Scene                         Ray ℛ𝓑 of ℐ𝓑
+                                                                     (Indexed from ℛ and ℐ)
+                      Tokens 𝐩                                                                    Tokens 𝐳                       (Indexed from ℛ)
+                                                          Indexing
+                              + i.d. p.e.
+                                                                                                                  Updated                                  Predicted     Images ℐ𝓑
+           +                                                                                                       Scene                                   Images ℐመ𝓑 (Indexed from ℐ)
+          i.d.
+          p.e.                                                                                                    Tokens 𝐳 ∗
+                       Camera
+                      Estimator                                                                    Scene
+                                                                                                                                   Rendering                            𝓛
+                                                                                                   Recon-
+                                                                                                                                    Decoder
+                                                                                                  structor
+               Poses 𝒫 & Intrinsics
+                         𝐏𝟐
+                                       𝐏𝟒
+                 𝐏𝟏
+                                                                                                                                        1
+                                       𝐏𝟓                                                                                         ℒ=           σ መ𝐼∈ℐመ (MSE 𝐼, 𝐼መ + 𝜆 ⋅ Percep(𝐼, መ𝐼))
+                                                                                                                                       |ℐ𝓑 |          𝓑
+
+                 𝐏c                                              (ℐ𝓐 Posed & Calibrated)
+Figure 3. RayZer self-supervised learning framework. RayZer takes in unposed and uncalibrated multi-view images I and predicts
+per-view camera parameters and a scene representation, which supports novel view rendering. (Left) RayZer first estimates camera
+parameters, where one view is selected as the canonical reference view (in blue box). RayZer predicts the intrinsics and the relative camera
+poses P of all views. The predicted cameras are then converted into pixel-aligned Plücker ray maps R. (Middle) RayZer uses a subset of
+input images, IA , as well as their previously predicted camera Plücker ray maps, RA , to predict a latent scene representation. Here, the
+Plücker ray maps, RA , serve as an effective condition for scene reconstruction. (Right) RayZer can render a target image given the scene
+representation z∗ and a target camera. During training, we use RB , which is the previously predicted cameras Plücker ray maps of IB , to
+render ÎB . This allows training RayZer end-to-end with self-supervised photometric losses between inputs IB and their renderings ÎB .
+
+cally well-defined parametrization helps disentangle image                                        which benefits pose estimation. Finally, we reshape the token
+information from the camera representation.                                                       maps of all images into a set, denoted as f ∈ RKhw×d (recall
+    RayZer then transforms the SE(3) camera poses and                                             that the transformer is invariant to the permutation of tokens).
+intrinsics into Plücker ray maps [57], representing the pre-                                      For brevity, we will use this notation for latent token sets
+dicted cameras as pixel-aligned rays. This ray-based rep-                                         throughout the rest of the paper.
+resentation captures both the 2D ray-pixel alignment and                                          Camera Estimator. The camera estimator Ecam predicts
+the 3D ray geometry, providing fine-grained, ray-level de-                                        camera parameters, i.e., camera poses and intrinsics, for all
+tails that encapsulate the physical properties of the camera                                      input images. We use a learnable camera token in R1×d as
+model. The ray maps serve as a condition for improving the                                        the initial feature for this prediction for all views. We repeat
+reconstruction stage that follows.                                                                the token K times and add them with image index p.e. such
+    From the image and predicted Plücker rays of IA , RayZer                                      that they correspond to the K images. We denote this camera
+uses another transformer-based encoder to predict the latent                                      feature initialization as p ∈ RK×d . We then use the camera
+set scene representation (introduced in Sec. 3 and detailed                                       estimator composed of full self-attention transformer layers
+later). Then, RayZer uses the previously estimated cameras                                        to update the camera tokens, as:
+of IB to predict ÎB , providing photometric self-supervision
+                                                                                                                          {f ∗ , p∗ } = Ecam ({f , p}),                                  (2)
+(Eq. 1). We now formally introduce the RayZer model.
+                                                                                                  where {·, ·} denotes concatenation along the token dimen-
+Image Tokenization. For all K input images I =
+                                                                                                  sion (the union set of two token sets), and f ∗ and p∗ are the
+{Ii ∈ RH×W ×3 |i = 1, ..., K}, we patchify them into non-
+                                                                                                  updated tokens. We note that f ∗ is not used for the following
+overlapping patches following ViT [18]. Each patch is in
+                                                                                                  computation – it is only used as context to update p in the
+Rs×s×3 , where s is the patch size. We use a linear layer to
+                                                                                                  transformer layers. For clarity, we formulate the transformer
+encode each patch into a token in Rd , leading to a patch-
+                                                                                                  layers as follows:
+aligned token map fi ∈ Rh×w×d for each image, where
+h = H/s, w = W/s, and d is the latent dimension.                                                             y0 = {f , p},                                                               (3)
+   We then add positional embeddings (p.e.) to the tokens,                                                    l
+                                                                                                             y = TransformerLayer (y              l    l−1
+                                                                                                                                                             ), l = 1, ..., lT           (4)
+enabling the following model to be aware of the spatial                                                           ∗   ∗                lT
+                                                                                                             {f , p } = split(y ),                                                       (5)
+location and the corresponding image index of each token.
+Specifically, we combine the sinusoidal spatial p.e. [18] and                                     where lT is the number of layers, and the split operation
+the sinusoidal image index p.e. [3] using a linear layer; note                                    recovers the two token sets, inverting Eq. 3. This notation
+that the image index p.e. is shared among all tokens from                                         remains consistent throughout the rest of the paper.
+the same image. When training on continuous video frames,                                            We then predict the camera parameters for each image
+these image index embeddings also encode sequential priors,                                       independently. For camera pose prediction, we follow prior
+
+
+                                                                                              4
+works of using relative camera poses to resolve ambigu-                  scene representation predicted from IA . Meanwhile, x∗A is
+ity [31, 89]. We select one view as the canonical reference              discarded.
+(e.g., with identity rotation and zero translation), while for           Rendering Decoder. We first define the rendering decoder
+every non-canonical view, we predict its relative pose with              and then describe its training usage.
+respect to the canonical view. We parametrize the SO(3)                     We use a transformer-based decoder with full self-
+rotation using a continuous 6D representation [97], and we               attention for rendering, following LVSM [33]. For a target
+predict the relative pose with a two-layer MLP as follows:               image, we begin by representing it as pixel-aligned Plücker
+                  pi = MLPpose ([p∗i , p∗c ]),                (6)        rays and tokenize these rays using a linear layer to obtain tar-
+                                                                         get tokens r ∈ Rhw×d . Next, we fuse the scene information
+where [·, ·] denotes concatenation along the feature dimen-              by updating the tokens with a decoder Drender comprising
+sion, p∗i and p∗c (all in Rd ) are the camera tokens for image           transformer layers:
+Ii and the canonical view, respectively. The output pi ∈ R9
+represents the predicted pose parameters, which are then                                 {r∗ , z′ } = Drender ({r, z∗ }),           (10)
+transformed into an SE(3) pose Pi for image Ii .                                 ′
+                                                                         where z is subsequently discarded, while the update rule
+   For intrinsics prediction, following prior works [24, 41],            of Drender is the same as previously introduced modules.
+we parameterize intrinsics using a single focal length value,            Finally, we decode the RGB values at the patch level with
+under the assumptions that i) the focal lengths along the x              an MLP:
+and y axes are identical, ii) all views share the same intrinsics,
+and iii) the principal point is at the image center. We predict                                   Iˆ = MLPrgb (r∗ ),                (11)
+the focal length using a two-layer MLP:                                                       2
+                                                                         where Iˆ ∈ Rhw×(3s ) . We reshape Iˆ to recover the 2D spa-
+                    focal = MLPfocal (p∗c ).                  (7)        tial structure, yielding a final rendered image in RH×W ×3 .
+                                                                             During training, we use the predicted Plücker ray maps
+The predicted focal length is then converted into the intrin-            RB , which correspond to ÎB , to render images of ÎB and
+sics matrix K ∈ R3×3 .                                                   then compute the self-supervised loss as defined in Eq. 1.
+Scene Reconstructor. As discussed in Sec. 4.1, we predict
+the scene representation from image set IA and additionally              5. Experiments
+condition it on the previously predicted camera parameters
+                                                                         In this section, we introduce the experimental setting and
+PA = {(Pi , K)|Ii ∈ IA }. We first convert PA to pixel-
+                                                                         present the evaluation results. For the implementation,
+aligned Plücker rays [57] for each image, denoted as R ∈
+                                                                         RayZer employs 24 transformer layers, with 8 layers for
+RK×H×W ×6 . Similar to image inputs, we also tokenize
+                                                                         each of the camera estimator, scene encoder, and rendering
+the Plücker rays into patch-level tokens using a linear layer,
+                                                                         decoder. We train RayZer with a learning rate of 4 × 10−4
+yielding r ∈ RKhw×d . We index the image and Plücker rays
+                                                                         with a cosine scheduler for 50,000 iterations and a batch size
+tokens corresponding to the image set IA , denoted as fA and
+                                                                         of 256. The weight of perceptual loss is λ = 0.2. For all
+rA (each in RKA hw×d , respectively). We fuse these tokens
+                                                                         experiments, we used a resolution of 256 with a patch size
+along the feature dimension with a two-layer MLP:
+                                                                         of 16. More details are in the Appendix.
+                  xA = MLPfuse ([fA , rA ]),                  (8)        5.1. Experimental Setup
+where xA ∈ RKA hw×d represents the fused tokens. Impor-                  We introduce our experimental setup, including datasets,
+tantly, we use the raw image tokens f rather than the pose               evaluation protocol and metrics, as well as baseline methods.
+transformer output f ∗ for this fusion. This design choice               Datasets. We use three datasets to evaluate RayZer,
+prevents leakage of information from the image set IB , since            including two scene-level datasets, DL3DV [49] and
+the camera estimator transformer producing f ∗ has access to             RealEstate [96], and an object-level dataset Objaverse [17]
+a global context that includes tokens from IB .                          (rendered as videos). We train and test on each dataset sep-
+   We then employ a scene reconstructor Escene consisting                arately. The numbers of input views (IA ) and target views
+of full self-attention transformer layers to predict the latent          (IB ) are set to 16 and 8 for DL3DV, 5 and 5 for RealEstate,
+scene representation. To initialize this representation, we              and 12 and 8 for Objaverse, respectively. We sample input
+use a set of learnable tokens z ∈ RL×d , where L denotes the             images with the index ranges of 64-96, 128-192, and 50-65
+number of tokens. We formulate the process as follows:                   on DL3DV, RealEstate, and Objaverse, respectively. These
+                {z∗ , x∗A } = Escene ({z, xA }).              (9)        values are chosen based on data difficulty, especially camera
+                                                                         baseline, following prior works [9, 91, 98]. We use the offi-
+The update rule is identical to the transformer layers in the            cal DL3DV train-test split, and split RealEstate following [9].
+camera estimator Ecam . Here, z∗ represents the final latent             More details can be found in the Appendix.
+
+
+                                                                     5
+         GS-LRM         LVSM          RayZer (ours)        GT             GS-LRM                       LVSM                   RayZer (ours)                      GT
+
+
+
+
+View 1
+
+
+
+
+View 2
+
+
+
+
+View 1
+
+
+
+
+View 2
+
+
+
+Figure 4. Visualization results on RealEstate and DL3DV. We compare RayZer with “oracle” methods GS-LRM and LVSM, which use
+COLMAP pose annotations in both training and testing. Our self-supervised RayZer model does not use any pose annotations. Generally,
+RayZer performs on par with “oracle” methods (first row), and can outperform them on cases that COLMAP usually struggles to handle,
+e.g., glasses and white walls (highlighted with red boxes). The results verify our analysis on the problems of using COLMAP in Sec. 5.2.
+
+                                                                                     Training       Inference w.              Even Sample              Random Sample
+Evaluation Protocol and Metrics. We evaluate novel view                             Supervision    COLMAP Cam.        PSNR↑     SSIM↑ LPIPS↓       PSNR↑ SSIM↑ LPIPS↓
+synthesis quality. Specifically, the evaluation protocol of             “Oracle” methods (assume inputs are posed & use pose annotations during training)
+
+RayZer is different from the “oracle” and supervised meth-              GS-LRM
+                                                                        LVSM
+                                                                                   2D + Camera
+                                                                                   2D + Camera
+                                                                                                         Yes
+                                                                                                         Yes
+                                                                                                                      23.49
+                                                                                                                      23.69
+                                                                                                                                0.712
+                                                                                                                                0.723
+                                                                                                                                          0.252
+                                                                                                                                          0.242
+                                                                                                                                                    23.02
+                                                                                                                                                    23.10
+                                                                                                                                                                0.705
+                                                                                                                                                                0.703
+                                                                                                                                                                        0.266
+                                                                                                                                                                        0.257
+ods, which use ground-truth poses to render images. Instead,            Unsupervised methods (inputs are un-posed & no pose annotations used during training)
+we use predicted poses to render novel views, thereby as-               RayZer          2D               No           24.36     0.757     0.209     23.72       0.733   0.222
+
+sessing the compatibility between the predicted poses and              Table 1. Evaluation results on DL3DV. The camera annotations
+the scene representation. Since the model is trained without           used by the “oracle” models come from COLMAP. The results are
+explicit pose annotations, the learned poses exist in a differ-        reported with continuous video frames (ordered) as the input. The
+ent space, and their direct correspondence to standard pose            results for the unordered image set input are in Table. 4. The input
+annotations is unknown. This evaluation protocol follows               and target views can be evenly or randomly sampled from video
+RUST [63]. We note that the target views are used only for             frames. We bold our result if it is better than the “oracle” models.
+pose estimation and not for scene representation prediction,
+ensuring that no information leakage occurs.                           method RUST [63], but since it does not have an official
+                                                                       public implementation, we ablate the key design differences
+Baselines. We compare RayZer with two types of meth-                   between RUST and RayZer in Table 7 instead.
+ods, including 1) “oracle” methods, i.e., GS-LRM [91] and
+LVSM [33] (encoder-decoder version), that use ground-truth             5.2. Results
+camera poses during both training (as supervision) and in-             Main results. Table 1-3 summarizes the results on the three
+ference (as pre-requisite). LVSM also uses latent set scene            datasets. Remarkably, without any 3D labels (e.g., cam-
+representation. Thus, it serves as the main comparison for the         era pose annotations) during training, RayZer achieves per-
+“oracle” methods; 2) supervised method, i.e., PF-LRM [74],             formance comparable to the best “oracle” model, LVSM.
+which requires camera supervision to learn pose estimation             In fact, RayZer even outperforms LVSM on DL3DV and
+and reconstruction; thus, it is pose-free during inference. For        RealEstate10k while performing slightly worse on Obja-
+fair comparisons, we use 16 transformer layers in total for            verse. We conjecture that this is because the camera poses in
+GS-LRM and LVSM. Thus, their number of parameters is                   DL3DV and RealEstate are annotated by COLMAP, which
+the same as RayZer, except that RayZer has another camera              can be imperfect and set an upper bound for “oracle” meth-
+estimator to handle unposed images. We use 24 transformer              ods that are supervised by COLMAP annotations. In contrast,
+layers for PF-LRM. We also consider the self-supervised                our self-supervised approach enables the model to learn a
+
+
+                                                                   6
+            PF-LRM                    LVSM                RayZer (ours)                    GT                                  Training        Inference w.            Even Sample            Random Sample
+                                                                                                                              Supervision        GT Cam.      PSNR↑      SSIM↑ LPIPS↓     PSNR↑ SSIM↑ LPIPS↓
+                                                                                                               “Oracle” methods (assume inputs are posed & use pose annotations during training)
+
+View 1
+                                                                                                               LVSM       2D + GT Cam.             Yes        32.34      0.950    0.050   32.34    0.949   0.051
+                                                                                                               Supervised methods (inputs are un-posed & use pose annotations during training)
+                                                                                                               PF-LRM     2D + GT Cam.         Yes (render)   25.48      0.882    0.110   25.43    0.881   0.111
+                                                                                                               Unsupervised methods (inputs are un-posed & no pose annotations used during training)
+                                                                                                               RayZer              2D              No         31.52      0.945    0.052   31.42    0.943   0.053
+
+
+View 2
+                                                                                                              Table 3. Evaluation results on Objaverse with continuous video
+                                                                                                              frames inputs. The camera annotations are Blender ground-truth.
+                                                                                                              PF-LRM uses ground-truth poses to render novel views, same with
+                                                                                                              oracle methods, and we evaluate its predicted pose in Table 5.
+
+View 1
+                                                                                                                      Training       Inf. w.    Continuous             Even Sample            Random Sample
+                                                                                                                     Supervision    GT Pose       Inputs      PSNR↑      SSIM↑ LPIPS↓     PSNR↑ SSIM↑ LPIPS↓
+                                                                                                               (1)       2D             No           ✓         24.36      0.757   0.209   23.72    0.733   0.222
+                                                                                                               (2)       2D             No           ✗         20.56      0.576   0.334   20.02    0.566   0.356
+
+                                                                                                              Table 4. Evaluating RayZer performance when using continu-
+                                                                                                              ous or unordered images for training on DL3DV. In evaluations,
+View 2
+                                                                                                              the input frames are sampled from continuous video frames. (1)
+                                                                                                              keeps their temporal continuity (encoded by the image index p.e.)
+                                                                                                              during training. (2) randomly shuffles the images during training.
+Figure 5. Visualization results on Objaverse. RayZer performs on
+par with LVSM and outperforms the supervised method PF-LRM.                                                   on unordered image sets that are often limited in scale and
+                                                                                                              contain noisy content [45, 73].
+               Training       Inference w.              Even Sample              Random Sample
+              Supervision    COLMAP Cam.        PSNR↑     SSIM↑ LPIPS↓       PSNR↑ SSIM↑ LPIPS↓
+  “Oracle” methods (assume inputs are posed & use pose annotations during training)
+                                                                                                              5.3. Analysis of Camera Poses
+  GS-LRM
+  LVSM
+             2D + Camera
+             2D + Camera
+                                   Yes
+                                   Yes
+                                                24.25
+                                                27.00
+                                                          0.770
+                                                          0.851
+                                                                    0.227
+                                                                    0.157
+                                                                              23.21
+                                                                              25.88
+                                                                                          0.748
+                                                                                          0.828
+                                                                                                  0.251
+                                                                                                  0.175
+                                                                                                              RayZer’s learned camera pose space. We visualize some
+  Unsupervised methods (inputs are un-posed & no pose annotations used during training)
+                                                                                                              camera poses predicted by RayZer in Fig. 6. Although
+  RayZer          2D               No           27.48     0.861     0.146     26.32       0.835   0.164       RayZer predicts SE(3) camera poses, we observe that these
+Table 2. Evaluation results on RealEstate with continuous video                                               poses do not exactly match the real-world pose space. This
+frames inputs. The camera annotations come from COLMAP.                                                       result indicates that the SE(3) poses, which are later con-
+                                                                                                              verted into Plücker ray maps, offer a degree of flexibility.
+pose space that optimally benefits latent reconstruction and                                                  Since both the rendering decoder and the scene representa-
+novel view synthesis. This hypothesis is further supported                                                    tion operate in latent space, RayZer remains robust to any
+by the results on Objaverse – a synthetic dataset with perfect                                                warping between the learned pose space and the actual real-
+pose annotations from the rendering tool – where LVSM,                                                        world poses, as long as the poses are compatible with the
+acting as a true oracle, outperforms RayZer. Nonetheless,                                                     scene representation and the decoder.
+the small performance gap showcases the effectiveness of                                                      3D Awareness of predicted camera poses. We further in-
+our self-supervised training. Visualizations in Fig. 4 further                                                vestigate whether the pose space learned by RayZer is 3D
+support our conjecture regarding COLMAP’s noisy poses,                                                        aware. To this end, we interpolate the predicted poses of in-
+as both LVSM and GS-LRM consistently underperform on                                                          put views to synthesize more novel views, where the camera
+challenging cases that COLMAP usually fails. These results                                                    pose of a novel view is interpolated from two neighboring
+not only validate our self-supervised learning approach but                                                   input views. We use ground-truth camera poses to calculate
+also demonstrate its potential to break free from the limita-                                                 the interpolation coefficients, checking whether predicted
+tions of supervised learning.                                                                                 poses follow the same geometric interpolation rules. We in-
+Using unordered image sets for training. RayZer can be                                                        clude the details of the interpolation method in Appendix. As
+trained on continuous video frames (Table 1-3) or unordered                                                   shown in Table 5, RayZer demonstrates significantly better
+image sets (Table 4). Note that these two training settings                                                   performance than PF-LRM and the naive baseline of copying
+are applied separately. As shown in Table 4, we observe                                                       the nearest rendered input view. These results verify that
+that the model trained with unordered image sets performs                                                     poses predicted by RayZer are interpolatable and 3D-aware.
+worse than the one trained with continuous video frames.                                                      Probing the learned camera pose space. To probe how
+We notice that the difference is at the pose estimation stage –                                               much actual pose information is learned by RayZer, we fol-
+specifically, the image index positional embedding encour-                                                    low RUST [63] to fit a lightweight 2-layer MLP head on
+ages local pose smoothness that benefits the learning of                                                      the pose features. We freeze the camera estimator’s trans-
+pose estimation on continuous frames. This finding suggests                                                   formers and train the MLP under camera supervision. As
+that scaling training data using video resources, which are                                                   shown in Table 6, our probing outperforms the supervised
+plentiful online, could be more advantageous than relying                                                     baseline (which has the same model architecture and uses
+
+
+                                                                                                          7
+                  Training
+                 Supervision
+                                 Inference w.
+                                   GT Pose      PSNR↑
+                                                        Even Sample
+                                                          SSIM↑ LPIPS↓
+                                                                                 Random Sample
+                                                                             PSNR↑ SSIM↑ LPIPS↓
+                                                                                                                                  Rendered Views (3/5)                                             Cameras
+ Supervised methods (inputs are un-posed & use pose annotations during training)
+ PF-LRM         2D + GT Pose         No         20.63     0.819     0.160     21.27      0.827   0.154
+ Unsupervised methods (inputs are un-posed & no pose annotations used during training)
+ RayZer-copy         2D              No         19.56     0.812     0.159     20.17      0.820   0.150
+ RayZer              2D              No         27.01     0.900     0.075     26.87      0.896   0.078
+
+Table 5. Evaluating 3D awareness of predicted camera poses
+on Objaverse. Unlike Table 3, here we render novel views by
+interpolating predicted poses of input views, where the interpolation
+coefficients are calculated from GT poses. This experiment tests
+whether the learned SE(3) poses are geometrically well-defined
+and 3D-aware. We also compare against a naive baseline “RayZer-
+copy” that simply copies the nearest rendered input view.
+
+transformers trained from scratch), indicating that RayZer’s
+novel view synthesis self-supervision facilitates a better la-
+tent pose space. In contrast, supervised learning struggles
+due to the challenges of low-dimensional pose representa-
+tion [5, 11, 44, 90, 97].
+                                                                                                             Figure 6. Visualization of RayZer predicted cameras learned
+5.4. Ablation Study                                                                                          with self-supervision. We visualize 3 out of 5 rendered views due
+                                                                                                             to space limit, where the image index is highlighted by its color.
+We ablate the main design choices of RayZer from three
+aspects, including scene representation, 3D prior, and the                                                                        Pose Encoder          Rotation Acc.↑ (%)          Translation Acc.↑ (%)
+                                                                                                                                     (Epose )        R@10◦ R@20◦ R@30◦             t@0.1 t@0.2 t@0.3
+overall model paradigm. As shown in Table 7 (1), when
+                                                                                                                                   supervised          39.3       63.0     77.8     15.7       33.1        44.4
+using the 3DGS representation rather than the latent set rep-                                                       DL3DV
+                                                                                                                                 self-supervised       47.6       72.5     84.0     20.8       44.0        60.5
+resentation, the training does not converge. This verifies the                                                      RealEstate
+                                                                                                                                   supervised          87.0       96.4     99.6     44.6       59.3        82.5
+                                                                                                                                 self-supervised       99.6       99.9     100      61.2       84.2        92.8
+optimization difficulty of explicit 3D representation [40, 91]                                                                     supervised          19.8       46.7     66.0     15.1       37.2        53.8
+                                                                                                                    Objaverse
+and demonstrates the flexibility of the latent representation                                                                    self-supervised       33.6       69.2     86.8     20.1       52.7        75.5
+
+with its learned rendering decoder.                                                                          Table 6. Effectiveness of self-supervised pre-training for pose
+    Table 7 (2) and (3) ablate the prior of camera representa-                                               estimation. We train a two-layer MLP (with supervised learning)
+tion. Without Plücker ray maps, we observe a degraded per-                                                   to read out latent camera tokens p∗ predicted by the pose encoder
+formance in (2), showing the effectiveness of using Plücker                                                  Epose , where the backbone is frozen. At the same time, we also
+                                                                                                             compare with the baseline where both encoder Epose and the pose
+ray maps to regularize the solution of structure-and-motion
+                                                                                                             prediction MLP are trained with supervised learning from scratch.
+problem. Besides, we observe a slightly better performance
+of (3), which directly uses camera tokens p∗ , compared to                                                                                                            Even Sample             Random Sample
+                                                                                                                                                                  PSNR SSIM LPIPS          PSNR SSIM LPIPS
+(2). The reason is that the camera tokens p∗ ∈ Rd can
+                                                                                                              (0)   RayZer                                        24.36   0.757   0.209    23.72      0.733       0.222
+leak target image information, while SE(3) poses used in                                                      (1)   Representation - 3DGS + rasterization           –      –          failed           –           –
+(2) serve as an information bottleneck to enforce this dis-                                                   (2)   Prior - no Plücker ray, use SE(3) pose        22.73   0.687   0.249    21.88      0.647       0.274
+                                                                                                              (3)   Prior - no explicit pose, use latent camera   23.13   0.700   0.251    22.36      0.668       0.272
+entanglement. Moreover, SE(3) poses are geometrically                                                         (4)   Paradigm - scene first, not pose first        13.31   0.338   0.732    13.12      0.337       0.729
+well-defined, allowing us to interpolate them and generate
+                                                                                                             Table 7. Ablation study of RayZer designs on DL3DV with con-
+novel views along the interpolated camera trajectory, while                                                  tinuous inputs. (1) is a variant uses the 3D Gaussian representation
+the latent camera representation is not directly interpolable.                                               rather than latent scene representation with its learned rendering
+    Table 7 (4) ablates the overall paradigm. When the model                                                 decoder used by RayZer; (2) does not use Plücker ray maps RA for
+first predicts the latent scene and then estimates poses, we                                                 conditioning latent reconstruction. Instead, it encodes the SE(3)
+observe a degraded performance. In detail, the pose estima-                                                  poses PA and intrinsics K into tokens as condition; (3) directly
+tor takes the scene representation and target image feature                                                  uses the latent camera tokens p∗ , rather than converting it to any
+tokens as inputs. The result verifies our insight that pose                                                  explicit forms of cameras, to condition the latent scene reconstruc-
+estimation can be a strong condition for scene reconstruction,                                               tion; (4) first reconstructs latent scene and then estimates pose as
+championing traditional pose-first methods in the context of                                                 Plücker ray maps, contrasting our pose-first paradigm.
+self-supervised learning. Note that combining (3) and (4)
+will be a model that is similar to RUST conceptually.                                                        3D geometry and camera annotations. RayZer achieves
+                                                                                                             comparable or even better novel view synthesis performance
+6. Conclusion                                                                                                than prior works that use pose labels in both training and
+We introduce RayZer, a self-supervised large multi-view                                                      inference, verifying the feasibility of breaking free from
+3D Vision model trained with zero 3D supervision, i.e., no                                                   supervised learning.
+
+
+                                                                                                         8
+
+=== APPENDIX, pp. 12-14 ===
+[92] Shangzhan Zhang, Jianyuan Wang, Yinghao Xu, Nan Xue,                 A. Experimental Details
+     Christian Rupprecht, Xiaowei Zhou, Yujun Shen, and Gordon
+     Wetzstein. Flare: Feed-forward geometry, appearance and              In this section, we introduce more details of RayZer.
+     camera estimation from uncalibrated sparse views. arXiv              Objaverse Data Details. We render Objaverse as contin-
+     preprint arXiv:2502.12138, 2025.                                     uous videos for training and evaluation. The frames are
+[93] Tianyuan Zhang, Zhengfei Kuang, Haian Jin, Zexiang Xu, Sai           rendered with corresponding cameras on a unit sphere with a
+     Bi, Hao Tan, He Zhang, Yiwei Hu, Milos Hasan, William T.             constant distance to the object center. Specifically, we render
+     Freeman, Kai Zhang, and Fujun Luan. Relitlrm: Generative             about 70 frames for azimuth 0◦ to 360◦ , where the elevation
+     relightable radiance for large reconstruction models, 2024.          is randomly sampled between -20◦ to 60◦ for each shape
+[94] Zhoutong Zhang, Forrester Cole, Zhengqi Li, Michael Rubin-           instance. We sample frames with the distance between the
+     stein, Noah Snavely, and William T Freeman. Structure and            first frame and the last frame being 50 to 65, covering the
+     motion from casual videos. In ECCV, pages 20–37. Springer,           camera azimuth rotation for about one cycle.
+     2022.
+                                                                          Camera Interpolation Details. For the experiment of inter-
+[95] Tinghui Zhou, Matthew Brown, Noah Snavely, and David G
+                                                                          polating predicted cameras, we use Spherical Linear Inter-
+     Lowe. Unsupervised learning of depth and ego-motion from
+     video. In CVPR, pages 1851–1858, 2017.
+                                                                          polation (Slerp) for interpolating the camera pose rotation.
+[96] Tinghui Zhou, Richard Tucker, John Flynn, Graham Fyffe,
+                                                                          This is based on the fact that the camera of Objaverse is
+     and Noah Snavely.          Stereo magnification: Learning            moving at a constant speed. Thus, Slerp ensures the correct
+     view synthesis using multiplane images. arXiv preprint               rotation interpolation. We then find the location on the unit
+     arXiv:1805.09817, 2018.                                              sphere that corresponds to this interpolated rotation angle.
+[97] Yi Zhou, Connelly Barnes, Jingwan Lu, Jimei Yang, and Hao            Thus, we ensure the interpolated cameras are still on the
+     Li. On the continuity of rotation representations in neural          unit sphere, which matches the camera sampling rule for
+     networks. In Proceedings of the IEEE/CVF conference on               rendering. In conclusion, this interpolation assumes that 1)
+     computer vision and pattern recognition, pages 5745–5753,            the camera is moving in a constant speed, and 2) the rule of
+     2019.                                                                sampling camera location is known. Thus, this interpolation
+[98] Chen Ziwen, Hao Tan, Kai Zhang, Sai Bi, Fujun Luan, Yicong           is only applicable to the synthetic Objaverse data, and does
+     Hong, Li Fuxin, and Zexiang Xu. Long-lrm: Long-sequence              not apply to DL3DV and RealEstate.
+     large reconstruction model for wide-coverage gaussian splats.        More Training Details. For all transformer layers in RayZer,
+     arXiv preprint 2410.12781, 2024.
+                                                                          we apply QK-Norm [27] to stabilize the training. We use a la-
+                                                                          tent dimension of 768 for RayZer and all baselines methods.
+                                                                          RayZer and LVSM both use a latent set scene representation
+                                                                          with 3072 tokens. We use mixed precision training [50]
+                                                                          with BF16, further accelerated by FlashAttention-V2 [16] of
+                                                                          xFormers [42] and gradient checkpointing [12].
+                                                                              We train RayZer and all baselines with the same training
+                                                                          protocol. We use 32 A100 GPUs with a total batch size
+                                                                          of 256. During training, we warm up with 3000 iterations,
+                                                                          using a linearly increased learning rate from 0 to 4e − 4. We
+                                                                          apply a cosine learning rate decay, while the final learning
+                                                                          rate is 1.5e − 4. We train all baselines with 50, 000 steps.
+                                                                          We clip the gradient with norm larger than 1.0. We follow
+                                                                          all other hyper-parameters of LVSM.
+                                                                          More Model Details. Following LVSM, we do not use bias
+                                                                          terms in linear and normalization layers. We also apply the
+                                                                          depth-wise initialization for transformer layers.
+                                                                          Ablation details. In Table 7 (2), we use a two-layer MLP to
+                                                                          encode the camera pose and intrinsics back to a latent pose
+                                                                          representation in Rd . In detail, for the predicted pose of each
+                                                                          image (in 6D representation [97]), and the camera intrinsics
+                                                                          (as the 4-dimensional focal length and principal points of
+                                                                          x-axis and y-axis), we first concatenate them, getting a 10-
+                                                                          dimensional pose representation. Then, we use the MLP
+                                                                          to map it as a high-dimensional pose feature token. To
+                                                                          predict the target views, we use a set of learnable patch-
+                                                                          aligned spatial tokens shared across all target images as the
+
+
+                                                                     12
+                                      Even Sample            Random Sample                 GS-LRM          LVSM         RayZer (ours)      GT
+                                  PSNR SSIM LPIPS         PSNR SSIM LPIPS
+ (0)   RayZer                     24.36   0.757   0.209   23.72   0.733   0.222
+ (1)   first frame as canonical   23.86   0.736   0.224   23.78   0.737   0.225
+ (2)   no curriculum              23.87   0.734   0.226   23.87   0.735   0.226
+
+Table 8. Ablation study of RayZer techniques to train on con-
+tinuous video frames. (1) is a variant choosing the first image in
+the sequence as the canonical view, rather than choosing the middle
+frame. (2) does not use the frame sampling curriculum.
+
+
+initialization. Thus, the rendering decoder takes in the spatial
+tokens, the scene tokens, and the pose token. After using
+transformer for updating, we use the updated spatial tokens
+to regress the pixel values.
+
+
+B. RayZer Training with Continuous Inputs
+RayZer takes in multi-view image inputs, which can be sam-
+pled from either continuous video frames or an unordered
+image set. In this section, we present two design choices to
+improve self-supervised learning on video frames input.
+Canonical View Selection. Prior works [29, 74] usually
+select the first image in an image sequence as the canonical
+view. In contrast, we select the frame at the middle time-step
+as canonical. In this context, the pose prediction MLPpose                               Figure 7. Visualization of RayZer failure cases on DL3DV.
+initialized with a zero mean for its weights will have a small
+pose data variance. Otherwise, when using the first frame
+as canonical, the variance can be much larger. Note that                               C. More Results
+this difference in pose variance can be easily handled with
+ground-truth camera supervision, thus, prior works choose                              In this section, we present more results for discussing
+the first image as the canonical view. However, this is more                           RayZer’s failure cases and show more visualizations.
+important for unsupervised methods, like RayZer.
+                                                                                       Failure Case Pattern. We observe that RayZer can fail when
+Curriculum. We gradually increase the training difficulty                              dealing with fine-grained geometry, complicated materials,
+by sampling video frames with an increasing distance range.                            and occlusions. We present the visualization in Fig. 7. In
+With proper initialization of the model for camera pose esti-                          detail, RayZer fails to handle complicated plant geometry
+mation, it first learns from images with small camera base-                            (first row). This failure is not specific to RayZer – GS-LRM
+lines, benefiting the training with larger camera baselines,                           and LVSM also can not handle it. In the second and last
+that follows. In detail, we use a curriculum with a frame                              row, RayZer fails to handle multiple stacked glasses and is
+sampling range of 48-64, 96-128, and 24-32 at the beginning                            not perfect on the specular reflection of the silver teapots.
+of training for DL3DV, RealEstate, and Objaverse, respec-                              GS-LRM and LVSM also demonstrate imperfect results. In
+tively. The frame sampling range is linearly increased to                              the third and fourth rows, all methods, including RayZer, fail
+64-96, 128-192, and 48-65 at the end of training for DL3DV,                            to handle occlusions, where the side view of the exhibition
+RealEstate, and Objaverse, respectively. The final frame                               stand is not observed in input views (third row), and the
+sampling range is also used for the evaluation. The sampling                           chairs in the fourth row have self-occlusion.
+ranges are set based on the difficulty (camera baseline) of
+each dataset, following prior works [9, 32, 74, 91, 98].                               More Comparisons. We present more visualization results,
+                                                                                       comparing with GS-LRM and LVSM in Fig. 8. RayZer
+Experiments. We include ablations in Table 8, where re-
+                                                                                       generally performs on par, while being a self-supervised
+moving any of the previously discussed techniques leads to a
+                                                                                       method that does not require any camera pose annotations.
+degraded performance. This demonstrates the effectiveness
+of our designs of selecting canonical view and using frame                             More Visualization. We present more visualization results
+sampling curriculum during training.                                                   comparing with ground-truth novel views in Fig. 9-11.
+
+
+                                                                                  13
+D. More Discussion                                                      GS-LRM           LVSM        RayZer (ours)      GT
+Why does RayZer demonstrates strong novel view synthesis
+quality while the fine-tuned pose estimation is not perfect
+(Table 7 in the main manuscript)? We conjecture RayZer’s
+pose space jointly learns the actual pose information and
+3D-aware video frame interpolation at the same time. On
+datasets with small camera baselines (RealEstate), which
+is easy to learn, RayZer mainly focuses on learning actual
+pose estimation. This is supported by the accurate pose
+estimation performance on RealEstate. On datasets that
+have large camera baselines (DL3DV and Objaverse), where
+pose estimation is harder to learn with only self-supervision,
+RayZer also leverages video interpolation cues together with
+pose estimation to perform novel view synthesis.
+    Thus, the method to further enhance disentanglement of
+interpolation and pose estimation would be an important
+future direction. In RayZer, using unordered image sets for
+training and using continuous video frames for training can
+be two extreme cases in the spectrum for learning this disen-
+tanglement. In detail, learning on continuous video frames
+with using image index positional embeddings strongly en-
+courages the camera pose local smoothness to enhance train-
+ing performance; while training on unordered image sets
+fully discards this prior. Finding a balance between the two
+and designing a better method to encourage the camera pose
+local smoothness is a promising avenue to solve the structure-
+and-motion problem with learning SE(3) camera poses in
+the real-world space.
+
+
+
+
+                                                                      Figure 8. Visual compression of RayZer and “oracle” methods
+                                                                      on DL3DV.
+
+
+                                                                 14
+

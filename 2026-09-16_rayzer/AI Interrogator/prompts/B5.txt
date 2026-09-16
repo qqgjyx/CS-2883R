@@ -1,0 +1,4 @@
+The released code states: "The model can be sensitive to the number of views, as it uses image
+index embedding. Make sure your number of views are the same during training and testing." This is
+not mentioned in the paper. Explain mechanically why it would be true given the architecture
+described, and propose a concrete fix.

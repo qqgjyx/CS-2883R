@@ -1,0 +1,13 @@
+You are answering a question from your own knowledge, as an analyst. This is not a coding task.
+Do not use any tools. Do not run shell commands. Do not read or write files. Do not search the web.
+
+Answer from your own knowledge only. Do not ask me to upload the PDF.
+
+The paper is: "RayZer: A Self-supervised Large View Synthesis Model" (Jiang et al., 2025).
+
+Abstract: We present RayZer, a self-supervised multi-view 3D Vision model trained without any
+3D supervision, i.e., camera poses and scene geometry, while exhibiting emerging 3D awareness.
+Concretely, RayZer takes unposed and uncalibrated images as input, recovers camera parameters,
+reconstructs a scene representation, and synthesizes novel views. During training, RayZer relies
+solely on its self-predicted camera poses to render target views, eliminating the need for any
+ground-truth camera annotations and allowing RayZer to be trained with 2D image supervision.

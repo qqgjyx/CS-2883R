@@ -1,0 +1,4 @@
+{"type":"thread.started","thread_id":"S2"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"No. Under Random Sample, both ablations improve PSNR over the full model: 23.78 and 23.87 versus 23.72. “First frame as canonical” also improves SSIM: 0.737 versus 0.733. Although LPIPS worsens (0.225/0.226 versus 0.222), the table does not show uniformly degraded performance across all metrics."}}
+{"type":"turn.completed","usage":{"input_tokens":13927,"cached_input_tokens":11264,"cache_write_input_tokens":0,"output_tokens":130,"reasoning_output_tokens":40}}

@@ -1,0 +1,4 @@
+{"type":"thread.started","thread_id":"armB"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"I don’t know the actual PSNR table entries well enough to report them reliably, nor can I confidently identify the strongest baseline on each dataset from memory. I would be estimating, so I won’t provide numbers.\n\nI vaguely recall evaluations involving datasets such as RealEstate10K and DL3DV, but I’m not sufficiently certain that this is the complete or correct benchmark list."}}
+{"type":"turn.completed","usage":{"input_tokens":21118,"cached_input_tokens":15360,"cache_write_input_tokens":0,"output_tokens":432,"reasoning_output_tokens":350}}

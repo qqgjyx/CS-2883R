@@ -1,0 +1,3 @@
+Which datasets is RayZer evaluated on, and what novel view synthesis PSNR does it report on each?
+Give the strongest baseline's PSNR alongside it. If you don't know the actual numbers, say so
+rather than estimating.
