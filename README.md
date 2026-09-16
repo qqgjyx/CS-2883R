@@ -33,15 +33,12 @@ Done:
 - [x] Read the paper. Fact sheet: [`NOTES.md`](2026-09-16_rayzer/NOTES.md)
 - [x] Ran the interrogation: 15 probes, 2 models, 27 answers, plus the preamble A/B rerun on both
 - [x] Verified every claim against the PDF; transcripts, prompts and event logs archived
+- [x] **Uploaded** `AI Interrogator/` to the shared Drive folder
+- [x] **Messaged Joseph Firmansyah** about the split. Text kept below for reference.
 - [x] Deliverable built: [`AI Interrogator/`](2026-09-16_rayzer/AI%20Interrogator/), 13-page PDF with every prompt, drop in as-is
 
 Left:
 
-- [ ] **Message Joseph Firmansyah** (Canvas Inbox or Ed; no email on file). Text below.
-- [ ] **Upload before 3:45pm Wed.** Open the shared folder link at the top of this file, then
-      drag `2026-09-16_rayzer/AI Interrogator` in. If Joseph's `AI Interrogator` folder is already
-      there, drop the files into it instead. Finder: `open -R "2026-09-16_rayzer/AI Interrogator"`.
-- [ ] Optional: rewrite the four assessment lines in your own words. Drafts are in the page, editable.
 - [ ] Quiz risk: quizzes come before a paper's discussion or at the start of the next class, so
       RayZer is fair game **Wed 16 Sep and Wed 23 Sep**. `NOTES.md` is the cram sheet.
 
