@@ -11,7 +11,8 @@ office hours Wed 5:45-6:45pm, SEC 1.412
 | Syllabus | [`doc/syllabus.md`](doc/syllabus.md) |
 | Roles + upload rules | [`doc/guidelines.md`](doc/guidelines.md) |
 | Sign-up / role sheet | _TODO: paste the Google Sheets link_ |
-| Shared upload folder | _TODO: paste the Drive folder link_ |
+| Shared upload folder | <https://drive.google.com/drive/folders/1i9ubGc51_2Kosz_I2ZViswT9NLtF8H1O> |
+| Drive, parent folder | <https://drive.google.com/drive/folders/15xFenBiIb0AkdeYh3VyEMV3GCh0v5vQ9> |
 | **Deck (source of truth)** | <https://claude.ai/artifact/6LC7D89KEjrcYCsbNXsjZ8> |
 
 Grading: presentation 30% / participation 30% / quizzes 10% / final project 30%.
@@ -37,7 +38,7 @@ Done:
 Left:
 
 - [ ] **Message Joseph Firmansyah** (Canvas Inbox or Ed; no email on file). Text below.
-- [ ] **Upload before 3:45pm Wed.** Paste the shared folder link at the top of this file, open it,
+- [ ] **Upload before 3:45pm Wed.** Open the shared folder link at the top of this file, then
       drag `2026-09-16_rayzer/AI Interrogator` in. If Joseph's `AI Interrogator` folder is already
       there, drop the files into it instead. Finder: `open -R "2026-09-16_rayzer/AI Interrogator"`.
 - [ ] Optional: rewrite the four assessment lines in your own words. Drafts are in the page, editable.
