@@ -21,7 +21,20 @@ Grading: presentation 30% / participation 30% / quizzes 10% / final project 30%.
 
 | Date | Paper | My role | Status |
 | --- | --- | --- | --- |
-| **Wed 2026-09-16** | [RayZer](https://arxiv.org/abs/2505.00702) (arXiv 2505.00702) | 🤖 **AI Interrogator** | prep in [`2026-09-16_rayzer/`](2026-09-16_rayzer/) |
+| **Wed 2026-09-16** | [RayZer](https://arxiv.org/abs/2505.00702) (arXiv 2505.00702) | 🤖 **AI Interrogator** | done, [`2026-09-16_rayzer/`](2026-09-16_rayzer/) |
+| **Wed 2026-10-14** | [MeanFlow](https://arxiv.org/abs/2505.13447) (arXiv 2505.13447) | 👾 **Hacker** | prep in [`2026-10-14_meanflow/`](2026-10-14_meanflow/) |
+
+### Wed 14 Oct, 3:45pm: MeanFlow Hacker
+
+Toy reimplementation on a 2D checkerboard: Flow Matching vs MeanFlow at 1 step, plus the JVP
+tangent ablation (paper Tab. 1b). Fact sheet, run of show and Slack draft are in
+[`NOTES.md`](2026-10-14_meanflow/NOTES.md).
+
+- [x] Paper read, numbers checked against the PDF
+- [x] `meanflow.py` + `demo.ipynb` written and run; weights in `weights/`
+- [ ] Post the Slack message to Leslie Gu and Zihan Su (draft in NOTES.md)
+- [ ] Rehearse 5 min
+- [ ] Upload `Hacker - MeanFlow - Juntang Wang/` to the shared Drive folder before 3:45pm
 
 Role is shared with Joseph Firmansyah (row 7 of the sheet); Juntang is row 8. The shared folder
 takes **one file per role**, so the two of us need to agree on a split and a single upload.
@@ -81,6 +94,11 @@ doc/                      course documents
     transcripts/          verbatim LLM responses, raw Codex event logs
   interrogator.html       the deliverable, published as an Artifact
   AI Interrogator/        the upload folder: PDF, HTML, README, prompts/, transcripts/, logs/
+2026-10-14_meanflow/
+  NOTES.md                fact sheet, run of show, Slack draft
+  meanflow.py             Alg. 1 + 2 from scratch, toy data, variants
+  demo.ipynb              the demo; loads weights/ (delete a .pt to retrain)
+  Hacker - MeanFlow - Juntang Wang/   the upload folder
 ```
 
 The deck is **one HTML file** published as an Artifact and updated in place at the same URL.
