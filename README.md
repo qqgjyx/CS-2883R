@@ -31,7 +31,7 @@ tangent ablation (paper Tab. 1b). Fact sheet, run of show and Slack draft are in
 [`NOTES.md`](2026-10-14_meanflow/NOTES.md).
 
 - [x] Paper read, numbers checked against the PDF
-- [x] `meanflow.py` + `demo.ipynb` written and run; weights in `weights/`
+- [x] `meanflow.ipynb` (one notebook, ~40 lines of method), loss checked against the authors' PyTorch code
 - [ ] Post the Slack message to Leslie Gu and Zihan Su (draft in NOTES.md)
 - [ ] Rehearse 5 min
 - [ ] Upload `Hacker - MeanFlow - Juntang Wang/` to the shared Drive folder before 3:45pm
@@ -96,8 +96,7 @@ doc/                      course documents
   AI Interrogator/        the upload folder: PDF, HTML, README, prompts/, transcripts/, logs/
 2026-10-14_meanflow/
   NOTES.md                fact sheet, run of show, Slack draft
-  meanflow.py             Alg. 1 + 2 from scratch, toy data, variants
-  demo.ipynb              the demo; loads weights/ (delete a .pt to retrain)
+  meanflow.ipynb          the whole demo; caches weights/ and figs/
   Hacker - MeanFlow - Juntang Wang/   the upload folder
 ```
 

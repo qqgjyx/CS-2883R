@@ -51,45 +51,60 @@ Headline (Tab. 2, ImageNet 256, from scratch, no distillation, no curriculum):
 
 **CFG is folded into the target** (Eq. 19): ṽ = ω v_t + (1−ω) u_θ(z_t, t, t). Sampling stays at 1 NFE.
 
-## What my toy found (2D checkerboard, `meanflow.py`, `demo.ipynb`)
+## What my toy found (`meanflow.ipynb`, 2D checkerboard)
 
-- Same net (MLP, 3 hidden layers of 512), same 20k steps, same everything. Only `ratio` or `tangent`
-  changes. The shared settings are the paper's **CIFAR-10** ones (App. A): 75% r≠t,
-  lognorm(−2, 2), p = 0.75. The ImageNet defaults (25%, lognorm(−0.4, 1), p = 1) gave a smeared
-  1-step checkerboard: an X with smeared corners instead of squares.
-- **Hacker gotcha:** with DiT-style high-frequency time embeddings (max freq ~1000), du/dt blows up
-  through the JVP and training diverges (ratio 75% went to SW distance > 1000). Low-frequency
-  sin/cos of t fixed it. Paper scale works because time is embedded then passed through an MLP; I
-  did not test that.
-- My first metric, sliced-Wasserstein, ranked a bad 1-step sample above a good 50-step one, so I
-  switched to histogram overlap (1 − TV on a 40×40 grid). **Look at the pictures**, not just one number.
-- Numbers (histogram overlap with the data, 1 = perfect; two fresh data samples score 0.92):
+- One notebook, about 40 lines of method code.
+  - Five models are identical except one knob: `ratio` (0 = Flow Matching) or the JVP tangent.
+  - Shared settings are the paper's **CIFAR-10** ones (App. A): 75% r≠t, lognorm(−2, 2), p = 0.75.
+  - Model: MLP on [z, t, t−r], 3 × 512, 10k steps, MPS.
+- **Checked against the authors' PyTorch code.** On the same inputs, `loss_fn` gives identical
+  loss and gradients to `forward_with_loss` in [Gsunshine/py-meanflow](https://github.com/Gsunshine/py-meanflow)
+  (the first author's port, CIFAR-10). JVP vs finite difference (float64): 1e-8.
+- Results: histogram overlap with the data, where 1 = identical and two fresh data samples score 0.92.
 
   | NFE | 1 | 2 | 4 | 8 | 16 | 50 |
   | --- | --- | --- | --- | --- | --- | --- |
-  | Flow Matching | **0.02** | 0.50 | 0.62 | 0.67 | 0.69 | 0.68 |
-  | MeanFlow | **0.56** | 0.63 | 0.67 | 0.68 | 0.68 | 0.68 |
+  | Flow Matching | **0.03** | 0.51 | 0.60 | 0.68 | 0.70 | 0.68 |
+  | MeanFlow | **0.61** | 0.63 | 0.65 | 0.64 | 0.64 | 0.63 |
 
-- Tangent ablation, 1 step: (v,0,1) 0.56 · (v,1,1) 0.38 · (v,1,0) 0.28 · (v,0,0) 0.27. Same order as
-  the paper's FIDs (61 < 138 < 268 < 329, with the last two swapped but both broken).
-- (v,0,0) and (v,1,0) give a Gaussian ball: the jump barely moves the noise.
-- JVP vs finite difference (float64): max error 2e-6, against a |du/dt| scale of 1.8.
-- Training: 5 models × 20k steps, about 9 min in parallel on the M3 Pro CPU. The notebook runs in about 25 s from saved weights.
+  MeanFlow at 1 step ≈ Flow Matching at 4. With many steps Flow Matching ends slightly higher,
+  as in the paper (3.43 at 1 step vs 2.06 for SiT at 250 steps).
+- Tangent ablation, 1 step: (v,0,1) 0.61 > (v,1,1) 0.40 > (v,0,0) 0.28 > (v,1,0) 0.00. This is
+  **exactly the paper's FID order** (61 < 138 < 268 < 329).
+  - (v,0,0) leaves a Gaussian ball: the jump barely moves the noise.
+  - (v,1,0) throws every sample off the plot.
+- Hacker findings, if asked:
+  - **Time input.** DiT-style sin/cos embeddings with high frequencies (~1000) blew up du/dt through
+    the JVP, and training diverged. Feeding raw t and t−r was both simplest and best: 0.61 vs 0.56
+    at 1 step.
+  - **Settings.** The paper's ImageNet settings (25%, lognorm(−0.4, 1), p = 1) gave a smeared X on
+    this toy. The CIFAR-10 settings fixed it.
+  - **Metric.** Sliced-Wasserstein ranked a smeared 1-step sample above a clean 50-step one, so look
+    at the pictures.
+- Prior art I checked (12 Oct):
+  - The authors' JAX code ([Gsunshine/meanflow](https://github.com/Gsunshine/meanflow)) and their
+    PyTorch CIFAR-10 port.
+  - [haidog-yaqub/MeanFlow](https://github.com/haidog-yaqub/MeanFlow): 1.2k★, MNIST to ImageNet.
+  - A 2D tutorial comparing Shortcut and MeanFlow
+    ([sdt201909](https://github.com/sdt201909/Flow_Matching_Tutorial_For_Beginner)).
+  - None of them does FM vs MF at 1 step plus the tangent ablation.
 
 ## Run of show, 5 min (your words; these are cues)
 
-1. **30 s, the problem.** Flow Matching 1 step = a dot in the middle. Why: at t = 1, z = ε carries
-   no information about x, so the ideal v(z, 1) = z − E[x]. One Euler step lands **exactly on the
-   data mean**, for every sample.
-2. **90 s, the one line.** Show `loss_fn`. The target is v minus (t−r)·dudt, and dudt comes from
-   one `jvp` with tangent (v, 0, 1). Delete that term and you have Flow Matching.
-3. **90 s, the result.** MF 1 step vs FM 1 step vs FM 50 steps. Then the NFE curve.
-4. **60 s, the ablation.** Wrong tangent, 1 step falls apart. Same ordering as Tab. 1b: (v,1,1)
-   hurts least.
-5. **30 s, question to the room.** Pick one:
-   - The target uses the network's own derivative under stop-grad. What stops it from
-     converging to a wrong u?
-   - Why does 25% r≠t beat 100%?
+1. **30 s, F1 left half: the problem.** Flow Matching 1 step = a dot. At t = 1 the noise carries
+   no information about x, so v(z, 1) = z − E[x], and one step lands **on the data mean**.
+2. **90 s, the `loss_fn` cell.** u_tgt = v − (t−r)·dudt, where dudt is one `jvp` with tangent
+   (v, 0, 1). With r = t this is Flow Matching. It is the same as the authors' PyTorch loss, checked.
+3. **60 s, F1 right + F2.** MeanFlow gets the board in 1 jump. The FM paths curve, and the MF jump
+   is the chord.
+4. **30 s, F3.** 1 MeanFlow step ≈ 4 Flow Matching steps. FM still wins with many steps, as in the
+   paper.
+5. **60 s, F4.** Wrong tangent: the order matches Tab. 1b exactly. Dropping ∂t u means the jump
+   goes nowhere.
+6. **30 s, question to the room.** Pick one:
+   - The target uses the network's own derivative under stop-grad. What stops it from converging
+     to a wrong u?
+   - Why do the toy and CIFAR want 75% r≠t when ImageNet wants 25%?
 
 ## Slack draft to the presenters (Leslie, Zihan)
 

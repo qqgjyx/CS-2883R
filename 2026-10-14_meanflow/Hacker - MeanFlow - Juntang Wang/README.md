@@ -1,21 +1,22 @@
 # Hacker: MeanFlow (Juntang Wang)
 
-A from-scratch toy MeanFlow on a 2D checkerboard. It compares Flow Matching and MeanFlow at 1
-step and breaks the JVP tangent as in the paper's Tab. 1b.
+A from-scratch MeanFlow on a 2D checkerboard, in one notebook. It compares Flow Matching and
+MeanFlow at 1 step and breaks the JVP tangent as in the paper's Tab. 1b.
 
-- `demo.pdf` / `demo.html`: the executed notebook, readable without Python
-- `demo.ipynb`: the notebook itself
-- `meanflow.py`: all of the code (model, Alg. 1 loss, sampler, data, metric)
-- `weights/`: the five trained models, so the notebook runs in seconds
+- `meanflow.pdf`: the executed notebook, readable without Python
+- `meanflow.ipynb`: the notebook (about 40 lines of method code)
+- `figs/`: the four figures
+- `weights/`: the five trained models, so the notebook runs in about 20 s
 
-Run it:
+To run it:
 
 ```
-uv run --with torch --with matplotlib --with jupyter jupyter lab demo.ipynb
+uv run --with torch --with matplotlib --with jupyter jupyter lab meanflow.ipynb
 ```
 
-Delete a file in `weights/` to retrain that model, about 10 minutes on a laptop CPU.
+Delete a file in `weights/` to retrain that model, about 2.5 min on an M3 Pro.
 
-Credits: the method and pseudocode are from Geng, Deng, Bai, Kolter, He, "Mean Flows for One-step
-Generative Modeling" (arXiv 2505.13447), Alg. 1 and 2. I wrote the code from scratch in PyTorch
-and used no existing MeanFlow implementation.
+Credits: the method, pseudocode and settings are from Geng, Deng, Bai, Kolter, He, "Mean Flows for
+One-step Generative Modeling" (arXiv 2505.13447). I wrote the code. I checked `loss_fn` against
+the first author's PyTorch release, https://github.com/Gsunshine/py-meanflow
+(`forward_with_loss`): the loss and gradients are identical on the same inputs.
