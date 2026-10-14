@@ -21,10 +21,23 @@ Grading: presentation 30% / participation 30% / quizzes 10% / final project 30%.
 
 | Date | Paper | My role | Status |
 | --- | --- | --- | --- |
-| **Wed 2026-09-16** | [RayZer](https://arxiv.org/abs/2505.00702) (arXiv 2505.00702) | 🤖 **AI Interrogator** | prep in [`2026-09-16_rayzer/`](2026-09-16_rayzer/) |
+| **Wed 2026-09-16** | [RayZer](https://arxiv.org/abs/2505.00702) (arXiv 2505.00702) | 🤖 **AI Interrogator** | done, [`2026-09-16_rayzer/`](2026-09-16_rayzer/) |
+| **Wed 2026-10-14** | [MeanFlow](https://arxiv.org/abs/2505.13447) (arXiv 2505.13447) | 👾 **Hacker** | prep in [`2026-10-14_meanflow/`](2026-10-14_meanflow/) |
 
-Role is shared with Joseph Firmansyah (row 7 of the sheet); Juntang is row 8. The shared folder
-takes **one file per role**, so the two of us need to agree on a split and a single upload.
+### Wed 14 Oct, 3:45pm: MeanFlow Hacker
+
+Takeaway: learn the average, not the instant. Slides `main.tex` / `main.pdf`, Colab-ready
+`meanflow.ipynb` (retrains live during the talk). Colab:
+<https://colab.research.google.com/github/qqgjyx/CS-2883R/blob/main/2026-10-14_meanflow/meanflow.ipynb>
+
+- [x] Paper read, numbers checked against the PDF
+- [x] Slides and notebook; experiments on the RTX 5080
+- [x] Colab T4 dry run: 125 s of training (toys 25 + 19 s, MNIST 81 s), about 3 min with setup
+- [ ] Post the Slack message to Leslie Gu and Zihan Su
+- [ ] Rehearse 5 min
+- [ ] Upload `Hacker - MeanFlow - Juntang Wang/` to the shared Drive folder before 3:45pm
+
+Joseph Firmansyah is the Hacker for the other paper (JiT); this role is solo.
 
 ### Wed 16 Sep, 3:45pm — upload before class
 
@@ -81,6 +94,11 @@ doc/                      course documents
     transcripts/          verbatim LLM responses, raw Codex event logs
   interrogator.html       the deliverable, published as an Artifact
   AI Interrogator/        the upload folder: PDF, HTML, README, prompts/, transcripts/, logs/
+2026-10-14_meanflow/
+  main.tex, refs.bib      the slides (Beamer, moloch); build with latexmk -pdf
+  meanflow.ipynb          the whole demo; caches weights/ and figs/
+  meanflow.py, models/    adapted from haidog-yaqub/MeanFlow (LICENSE-haidog)
+  Hacker - MeanFlow - Juntang Wang/   the upload folder
 ```
 
 The deck is **one HTML file** published as an Artifact and updated in place at the same URL.
