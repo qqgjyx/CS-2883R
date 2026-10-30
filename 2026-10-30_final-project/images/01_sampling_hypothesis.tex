@@ -1,0 +1,62 @@
+% Adapted from DriftNeRF's images/fig-overview.tex: ray/sample geometry,
+% contrasting anchor/candidate colors, proximity links, rounded consensus box.
+% https://github.com/qqgjyx/overleaf_DriftNeRF/blob/79946b56b0b951b03da3b58f4ea7062e4076bfa2/images/fig-overview.tex
+% Citation: Wang et al., arXiv:2610.29106v1 (CC BY 4.0).
+% Changes: compact two-panel layout, input-ray labels, equal candidate counts,
+% stratified off-ray queries, explicit detached targets. No result data.
+% Blank lines are commented because acmart collects teaser content as an argument.
+\begin{teaserfigure}
+\centering
+\begin{tikzpicture}[
+  x=1cm,y=1cm,font=\sffamily\small,
+  candidate/.style={circle,fill=blue!65!black,inner sep=2pt},
+  anchorpoint/.style={circle,fill=orange!85!black,inner sep=2.6pt},
+  arr/.style={-{Stealth[length=4pt]},semithick},
+  target/.style={draw=black!45,rounded corners=2pt,fill=black!3,
+    minimum height=0.55cm,align=center,inner sep=4pt}
+]
+\begin{scope}
+  \node[font=\sffamily\bfseries] at (3.45,2.8)
+    {(a) DriftNeRF: reuse ray samples};
+  \draw[gray!40,fill=gray!3] (0.2,0) rectangle (6.7,2.25);
+  \draw[orange!70!black,thin] (0.35,0.25) -- (6.55,2.0)
+    node[pos=0.05,above,font=\scriptsize] {ray $a$};
+  \draw[blue!55!black,thin] (0.35,1.75) -- (6.55,1.75)
+    node[pos=0.97,above,font=\scriptsize] {ray $b$};
+  \draw[blue!55!black,thin] (0.35,0.5) -- (6.55,0.5)
+    node[pos=0.97,above,font=\scriptsize] {ray $c$};
+  \coordinate (a) at (3.45,1.125);
+  \foreach \x/\y in {1.5/1.75,4.3/1.75,2.4/0.5,5.4/0.5}{
+    \draw[black!35,densely dotted] (a) -- (\x,\y);
+    \node[candidate] at (\x,\y) {};
+  }
+  \node[anchorpoint,label={[font=\scriptsize]below:$\vx_i$}] at (a) {};
+  \node[font=\scriptsize,align=center] at (3.45,-0.38)
+    {Other-ray candidates; original distance cutoff};
+  \node[target] (leftTarget) at (3.45,-1.17)
+    {Distance-weighted average of $\sg(\sigma(\vx_j))$};
+  \draw[arr,black!55] (3.45,-0.62) -- (leftTarget.north);
+\end{scope}
+\begin{scope}[xshift=8.1cm]
+  \node[font=\sffamily\bfseries] at (3.45,2.8)
+    {(b) Proposed: query local cells};
+  \draw[gray!40,fill=gray!3] (0.2,0) rectangle (6.7,2.25);
+  \draw[gray!35] (3.45,0) -- (3.45,2.25);
+  \draw[gray!35] (0.2,1.125) -- (6.7,1.125);
+  \coordinate (a) at (3.45,1.125);
+  \foreach \x/\y in {1.3/1.65,4.6/1.85,2.2/0.4,5.65/0.65}{
+    \draw[black!35,densely dotted] (a) -- (\x,\y);
+    \node[candidate] at (\x,\y) {};
+  }
+  \node[anchorpoint,label={[font=\scriptsize]above:$\vx_i$}] at (a) {};
+  \node[font=\scriptsize,align=center] at (3.45,-0.38)
+    {One query per cell; no originating ray ID};
+  \node[target] (rightTarget) at (3.45,-1.17)
+    {Distance-weighted average of $\sg(\sigma(\vx_j))$};
+  \draw[arr,black!55] (3.45,-0.62) -- (rightTarget.north);
+\end{scope}
+\end{tikzpicture}
+\caption{Sampling constructions, adapted from DriftNeRF~\citep{wang2026driftnerf}. Orange denotes the anchor; blue denotes four candidates per panel. Dotted links connect candidates to the anchor for distance-weighted averaging. This conceptual 2D slice illustrates 3D sampling; equal displayed counts do not imply equal query costs.}
+\label{fig:sampling-hypothesis}
+\Description{Two panels with equal candidate counts. Left: an anchor on input ray a pools four candidate densities from other input rays b and c. Right: an anchor queries one candidate in each of four local cells, with no ray identifiers. Dotted proximity links lead to a distance-weighted detached-density target in each panel.}
+\end{teaserfigure}
