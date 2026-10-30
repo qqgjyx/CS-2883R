@@ -17,6 +17,13 @@ office hours Wed 5:45-6:45pm, SEC 1.412
 
 Grading: presentation 30% / participation 30% / quizzes 10% / final project 30%.
 
+## Final project
+
+Proposal source: [`2026-10-30_final-project/main.tex`](2026-10-30_final-project/main.tex).
+Build inside that folder with `latexmk -pdf main.tex`.
+Proposal due October 30 at 11:59 p.m.; presentation December 2;
+final report due December 4 at 11:59 p.m. (2026, Eastern time).
+
 ## My assignments
 
 | Date | Paper | My role | Status |
@@ -76,7 +83,7 @@ Left:
 
 - **Quizzes** — three to four across the semester, unannounced.
 - **Final project** — coding project, in-class presentation, written report. The last class is
-  reserved for presentations. No date in the syllabus; worth asking.
+  reserved for presentations. See the final-project dates above.
 - **If you presenter a paper later** — confirm the paper with Qianqian, fill the role sheet and post
   to Ed, all **at least one week before**. Nothing on the sheet assigns you one yet.
 
@@ -99,6 +106,12 @@ doc/                      course documents
   meanflow.ipynb          the whole demo; caches weights/ and figs/
   meanflow.py, models/    adapted from haidog-yaqub/MeanFlow (LICENSE-haidog)
   Hacker - MeanFlow - Juntang Wang/   the upload folder
+2026-10-30_final-project/
+  main.tex, ref.bib       the proposal (ACM); build with latexmk -pdf
+  main.pdf               the compiled two-page proposal
+  math_commands.tex      shared notation
+  images/                adapted TikZ schematic
+  drafts/                preserved teammate first draft
 ```
 
 The deck is **one HTML file** published as an Artifact and updated in place at the same URL.
