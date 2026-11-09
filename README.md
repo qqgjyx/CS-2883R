@@ -59,7 +59,7 @@ Takeaway: learn the average, not the instant. Slides `main.tex` / `main.pdf`, Co
 - [x] Colab T4 dry run: 125 s of training (toys 25 + 19 s, MNIST 81 s), about 3 min with setup
 - [ ] Post the Slack message to Leslie Gu and Zihan Su
 - [ ] Rehearse 5 min
-- [ ] Upload `Hacker - MeanFlow - Juntang Wang/` to the shared Drive folder before 3:45pm
+- [ ] Upload `MeanFlow-Hacker/` to the shared Drive folder before 3:45pm
 
 Joseph Firmansyah is the Hacker for the other paper (JiT); this role is solo.
 
