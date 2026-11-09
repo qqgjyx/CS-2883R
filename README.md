@@ -39,6 +39,9 @@ roles. Slides `main.tex`: 15 main frames plus 6 backups, the authors' own figure
 every number checked against the paper, a timing budget per frame (about 14:15 of 15:00) and a
 marked handoff after the method. Conventions are written as rules in the file header. Only the
 roles' call order is still open. Build inside the folder with `latexmk -pdf main.tex`.
+The folder is a submodule synced with Overleaf: clone with `--recurse-submodules`, and after
+Overleaf edits run `git submodule update --remote 2026-11-18_lapa` and commit the bump.
+The paper is [`doc/12_LAPA_2410.11758.pdf`](doc/12_LAPA_2410.11758.pdf).
 
 - [ ] Meet Vivian Mon 9 Nov, 2pm (Zoom or call). Agenda: split by paper sections (her
   proposal), whose deck is the base (she has shared slides), paper confirmed with Qianqian
@@ -128,8 +131,7 @@ doc/                      course documents
   math_commands.tex      shared notation
   images/                adapted TikZ schematic
   drafts/                preserved teammate first draft
-2026-11-18_lapa/
-  2410.11758v2.pdf       the paper
+2026-11-18_lapa/        submodule: qqgjyx/overleaf_CS-2883R_lapa, synced with Overleaf
   main.tex, refs.bib     the slides (Beamer, moloch); build with latexmk -pdf
   figs/                  the authors' figures from the arXiv source, named by figure number
 ```
