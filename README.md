@@ -30,6 +30,23 @@ final report due December 4 at 11:59 p.m. (2026, Eastern time).
 | --- | --- | --- | --- |
 | **Wed 2026-09-16** | [RayZer](https://arxiv.org/abs/2505.00702) (arXiv 2505.00702) | 🤖 **AI Interrogator** | done, [`2026-09-16_rayzer/`](2026-09-16_rayzer/) |
 | **Wed 2026-10-14** | [MeanFlow](https://arxiv.org/abs/2505.13447) (arXiv 2505.13447) | 👾 **Hacker** | prep in [`2026-10-14_meanflow/`](2026-10-14_meanflow/) |
+| **Wed 2026-11-18** | [LAPA](https://arxiv.org/abs/2410.11758) (arXiv 2410.11758) | 🧑‍🏫 **Presenter**, with Vivian Hui | draft in [`2026-11-18_lapa/`](2026-11-18_lapa/) |
+
+### Wed 18 Nov, 3:45pm: LAPA Presenter, with Vivian Hui
+
+Vivian picked the paper. We share the 15-minute talk, then lead the discussion and call on the
+roles. Slides `main.tex`: 15 main frames plus 6 backups, the authors' own figures and tables,
+every number checked against the paper, a timing budget per frame (about 14:15 of 15:00) and a
+marked handoff after the method. Conventions are written as rules in the file header. Only the
+roles' call order is still open. Build inside the folder with `latexmk -pdf main.tex`.
+
+- [ ] Meet Vivian Mon 9 Nov, 2pm (Zoom or call). Agenda: split by paper sections (her
+  proposal), whose deck is the base (she has shared slides), paper confirmed with Qianqian
+- [ ] Split the talk with Vivian; the draft marks a handoff after the method
+- [ ] Make the slides ours: rewrite and cut where needed
+- [ ] Roles and call order from the Ed post, out about a week and a half before class
+- [ ] Rehearse the 15 minutes together
+- [ ] Upload `Presenter` to the shared Drive folder before 3:45pm
 
 ### Wed 14 Oct, 3:45pm: MeanFlow Hacker
 
@@ -84,8 +101,7 @@ Left:
 - **Quizzes** — three to four across the semester, unannounced.
 - **Final project** — coding project, in-class presentation, written report. The last class is
   reserved for presentations. See the final-project dates above.
-- **If you presenter a paper later** — confirm the paper with Qianqian, fill the role sheet and post
-  to Ed, all **at least one week before**. Nothing on the sheet assigns you one yet.
+- **Presenter**: 18 Nov, LAPA, with Vivian Hui. See above.
 
 ## Repo layout
 
@@ -105,13 +121,17 @@ doc/                      course documents
   main.tex, refs.bib      the slides (Beamer, moloch); build with latexmk -pdf
   meanflow.ipynb          the whole demo; caches weights/ and figs/
   meanflow.py, models/    adapted from haidog-yaqub/MeanFlow (LICENSE-haidog)
-  Hacker - MeanFlow - Juntang Wang/   the upload folder
+  MeanFlow-Hacker/        the upload folder
 2026-10-30_final-project/
   main.tex, ref.bib       the proposal (ACM); build with latexmk -pdf
   main.pdf               the compiled two-page proposal
   math_commands.tex      shared notation
   images/                adapted TikZ schematic
   drafts/                preserved teammate first draft
+2026-11-18_lapa/
+  2410.11758v2.pdf       the paper
+  main.tex, refs.bib     the slides (Beamer, moloch); build with latexmk -pdf
+  figs/                  the authors' figures from the arXiv source, named by figure number
 ```
 
 The deck is **one HTML file** published as an Artifact and updated in place at the same URL.
