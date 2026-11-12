@@ -30,7 +30,7 @@ final report due December 4 at 11:59 p.m. (2026, Eastern time).
 | --- | --- | --- | --- |
 | **Wed 2026-09-16** | [RayZer](https://arxiv.org/abs/2505.00702) (arXiv 2505.00702) | 🤖 **AI Interrogator** | done, [`2026-09-16_rayzer/`](2026-09-16_rayzer/) |
 | **Wed 2026-10-14** | [MeanFlow](https://arxiv.org/abs/2505.13447) (arXiv 2505.13447) | 👾 **Hacker** | prep in [`2026-10-14_meanflow/`](2026-10-14_meanflow/) |
-| **Wed 2026-11-18** | [PointWorld](https://arxiv.org/abs/2601.03782) (arXiv 2601.03782) | 🧑‍🏫 **Presenter**, with Vivian Hui | draft in [`2026-11-18_pre/`](2026-11-18_pre/); switched from LAPA on 10 Nov |
+| **Wed 2026-11-18** | [PointWorld](https://arxiv.org/abs/2601.03782) (arXiv 2601.03782) | 🧑‍🏫 **Presenter**, with Vivian Hui | draft in [`2026-11-18_PRE/`](2026-11-18_PRE/); switched from LAPA on 10 Nov |
 
 ### Wed 18 Nov, 3:45pm: PointWorld Presenter, with Vivian Hui
 
@@ -43,11 +43,14 @@ Slides `main.tex`: 16 main frames plus 8 backups, the authors' own figures and t
 number checked against the paper, a timing budget per frame (about 13:45 of 15:00) and a marked
 handoff after planning. Spoken as the first author, per the guidelines; our critique sits in the
 Discussion questions and the "Our reading" backup, for the reviewer and red-team roles.
-Build inside the folder with `latexmk -pdf main.tex`; `main.pdf` is the compiled deck.
+Build inside the folder with `latexmk -pdf main.tex`.
 
-The deck lives only here. Its earlier history, including the finished LAPA deck (tag
-`lapa-final`, paper [`doc/12_LAPA_2410.11758.pdf`](doc/12_LAPA_2410.11758.pdf)), is in the
-archived repo [qqgjyx/overleaf_CS-2883R_pre](https://github.com/qqgjyx/overleaf_CS-2883R_pre).
+The folder is a submodule of the private Overleaf-synced repo
+[qqgjyx/overleaf_CS-2883R-pre](https://github.com/qqgjyx/overleaf_CS-2883R-pre), which is the
+source of truth: edit in Overleaf, or push there. Clone with `--recurse-submodules`; after edits
+run `git submodule update --remote 2026-11-18_PRE` and commit the bump. The finished LAPA deck
+is the tag `lapa-final` in that repo (paper:
+[`doc/12_LAPA_2410.11758.pdf`](doc/12_LAPA_2410.11758.pdf)).
 
 - [x] Read PointWorld, numbers checked against the PDF
 - [x] Slides: the authors' own figures and tables, a timing budget per frame
@@ -137,9 +140,8 @@ doc/                      course documents
   math_commands.tex      shared notation
   images/                adapted TikZ schematic
   drafts/                preserved teammate first draft
-2026-11-18_pre/
+2026-11-18_PRE/         submodule: qqgjyx/overleaf_CS-2883R-pre (private), synced with Overleaf
   main.tex, refs.bib     the slides (Beamer, moloch); build with latexmk -pdf
-  main.pdf               the compiled deck
   figs/                  the authors' figures from the arXiv source, named by figure number
 ```
 
