@@ -56,7 +56,7 @@
   \draw[arr,black!55] (3.45,-0.62) -- (rightTarget.north);
 \end{scope}
 \end{tikzpicture}
-\caption{Sampling constructions, adapted from DriftNeRF~\citep{wang2026driftnerf}. Orange denotes the anchor; blue denotes four candidates per panel. Dotted links connect candidates to the anchor for distance-weighted averaging. This conceptual 2D slice illustrates 3D sampling; equal displayed counts do not imply equal query costs.}
+\caption{Comparison of sampling strategies, adapted from DriftNeRF~\citep{wang2026driftnerf}. DriftNeRF reuses nearby samples from other camera rays, while our proposed approach queries one point in each local cell. Both form a distance-weighted target from the candidate densities. Orange marks the anchor and blue marks the candidates.}
 \label{fig:sampling-hypothesis}
-\Description{Two panels with equal candidate counts. Left: an anchor on input ray a pools four candidate densities from other input rays b and c. Right: an anchor queries one candidate in each of four local cells, with no ray identifiers. Dotted proximity links lead to a distance-weighted detached-density target in each panel.}
+\Description{Left: four candidates lie on other camera rays. Right: four candidates are spread across local cells. Dotted lines connect each candidate to the anchor.}
 \end{teaserfigure}
