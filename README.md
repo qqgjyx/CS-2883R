@@ -42,11 +42,12 @@ The paper is [`doc/13_PointWorld_2601.03782.pdf`](doc/13_PointWorld_2601.03782.p
 Slides `main.tex`: 16 main frames plus 8 backups, the authors' own figures and tables, every
 number checked against the paper, a timing budget per frame (about 13:45 of 15:00) and a marked
 handoff after planning. Spoken as the first author, per the guidelines; our critique sits in the
-Discussion questions and the "Our reading" backup, for the reviewer and red-team roles. Build inside the folder with `latexmk -pdf main.tex`. The folder is a
-submodule synced with Overleaf: clone with `--recurse-submodules`, and after Overleaf edits run
-`git submodule update --remote 2026-11-18_pre` and commit the bump. The finished LAPA deck is the
-tag `lapa-final` in the same repo ([`doc/12_LAPA_2410.11758.pdf`](doc/12_LAPA_2410.11758.pdf) is
-its paper).
+Discussion questions and the "Our reading" backup, for the reviewer and red-team roles.
+Build inside the folder with `latexmk -pdf main.tex`; `main.pdf` is the compiled deck.
+
+The deck lives only here. Its earlier history, including the finished LAPA deck (tag
+`lapa-final`, paper [`doc/12_LAPA_2410.11758.pdf`](doc/12_LAPA_2410.11758.pdf)), is in the
+archived repo [qqgjyx/overleaf_CS-2883R_pre](https://github.com/qqgjyx/overleaf_CS-2883R_pre).
 
 - [x] Read PointWorld, numbers checked against the PDF
 - [x] Slides: the authors' own figures and tables, a timing budget per frame
@@ -136,8 +137,9 @@ doc/                      course documents
   math_commands.tex      shared notation
   images/                adapted TikZ schematic
   drafts/                preserved teammate first draft
-2026-11-18_pre/         submodule: qqgjyx/overleaf_CS-2883R_pre, synced with Overleaf
+2026-11-18_pre/
   main.tex, refs.bib     the slides (Beamer, moloch); build with latexmk -pdf
+  main.pdf               the compiled deck
   figs/                  the authors' figures from the arXiv source, named by figure number
 ```
 
