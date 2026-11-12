@@ -1,0 +1,869 @@
+<meta charset="utf-8">
+<title>CS2883R Quiz 3 Drill</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column, same system as the Quiz 1 and Quiz 2 drills: sticky toolbar (score + paper filter), foldable cheat sheets, then question cards. Diagram and code questions put their figure inside the card in its own horizontal scroller. */
+:root {
+  --bg: #F2F4F7;
+  --surface: #FFFFFF;
+  --fg: #161B24;
+  --muted: #5A6375;
+  --line: #D9DEE7;
+  --accent: #2741C2;
+  --accent-soft: #E6EAFB;
+  --good: #1B7348;
+  --good-soft: #E3F3EA;
+  --bad: #B3261E;
+  --bad-soft: #FBE6E4;
+  --display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --body: "IBM Plex Sans", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0E1117; --surface: #161A22; --fg: #E5E9F1; --muted: #98A1B3; --line: #2A303C;
+    --accent: #8FA3FF; --accent-soft: #1E2545; --good: #5CCB91; --good-soft: #13291E;
+    --bad: #FF8A80; --bad-soft: #351816; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0E1117; --surface: #161A22; --fg: #E5E9F1; --muted: #98A1B3; --line: #2A303C;
+  --accent: #8FA3FF; --accent-soft: #1E2545; --good: #5CCB91; --good-soft: #13291E;
+  --bad: #FF8A80; --bad-soft: #351816; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 15px; line-height: 1.55; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.wrap { max-width: 860px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 28px 80px; }
+header.top { display: grid; gap: 6px; margin-bottom: 18px; }
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+h1 { font-family: var(--display); font-weight: 700; font-size: clamp(28px, 5vw, 40px); line-height: 1.1; margin: 0; text-wrap: balance; letter-spacing: -.01em; }
+.lede { color: var(--muted); margin: 0; max-width: 65ch; }
+
+.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); padding-block: 10px; border-bottom: 1px solid var(--line); display: grid; gap: 10px; margin-bottom: 18px; }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.chip { font: 500 13px/1 var(--body); border: 1px solid var(--line); background: var(--surface); color: var(--fg); border-radius: 999px; padding: 7px 12px; cursor: pointer; display: inline-flex; gap: 6px; align-items: center; }
+.chip .n { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+.chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--surface); }
+.chip[aria-pressed="true"] .n { color: var(--surface); opacity: .8; }
+.chip:focus-visible, button:focus-visible, textarea:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.score { font-family: var(--mono); font-size: 13px; color: var(--muted); display: flex; gap: 14px; flex-wrap: wrap; margin-right: auto; }
+.score b { color: var(--fg); font-weight: 500; }
+.btn { font: 500 13px/1 var(--body); border: 1px solid var(--line); background: var(--surface); color: var(--fg); border-radius: 8px; padding: 8px 12px; cursor: pointer; }
+.btn.primary { background: var(--accent); color: var(--surface); border-color: var(--accent); }
+.btn:hover { border-color: var(--accent); }
+.btn:disabled { opacity: .5; cursor: default; }
+
+.sheet { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; margin-bottom: 18px; }
+.sheet h2 { font-family: var(--display); font-size: 20px; margin: 0 0 2px; text-wrap: balance; }
+.sheet .meta { font-family: var(--mono); font-size: 12px; color: var(--muted); margin-bottom: 10px; }
+.sheet .gist { margin: 0 0 10px; max-width: 70ch; }
+.sheet ul { margin: 0; padding-left: 20px; display: grid; gap: 4px; }
+.sheet + .sheet { margin-top: -6px; }
+
+.list { display: grid; gap: 14px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; display: grid; gap: 12px; min-width: 0; }
+.card .tags { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; font-family: var(--mono); font-size: 12px; color: var(--muted); }
+.tag { border: 1px solid var(--line); border-radius: 4px; padding: 2px 6px; }
+.tag.type { color: var(--accent); border-color: var(--accent); }
+.q { font-weight: 500; font-size: 16px; margin: 0; }
+.hint { font-size: 13px; color: var(--muted); margin: -6px 0 0; }
+.opts { display: grid; gap: 8px; }
+.opt { text-align: left; font: 400 15px/1.45 var(--body); background: var(--bg); color: var(--fg); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; cursor: pointer; display: grid; grid-template-columns: 24px 1fr; gap: 8px; }
+.opt .k { font-family: var(--mono); color: var(--muted); }
+.opt:hover:not([disabled]) { border-color: var(--accent); }
+.opt[disabled] { cursor: default; }
+.opt.sel { background: var(--accent-soft); border-color: var(--accent); }
+.opt.sel .k { color: var(--accent); }
+.opt.right { background: var(--good-soft); border-color: var(--good); }
+.opt.right .k { color: var(--good); }
+.opt.wrong { background: var(--bad-soft); border-color: var(--bad); }
+.opt.wrong .k { color: var(--bad); }
+.opt.missed { border-color: var(--good); border-style: dashed; }
+.opt.missed .k { color: var(--good); }
+textarea { width: 100%; min-height: 70px; font: 400 15px/1.5 var(--body); color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; resize: vertical; }
+.fig { overflow-x: auto; background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 10px; }
+.fig svg { display: block; width: 100%; min-width: 600px; height: auto; }
+pre.code { margin: 0; overflow-x: auto; background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; font: 400 13px/1.6 var(--mono); color: var(--fg); }
+pre.code .c { color: var(--muted); }
+pre.code .b { color: var(--accent); font-weight: 500; }
+.parts { display: grid; gap: 10px; }
+.part { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 6px 12px; align-items: center; }
+.part .pl { font-size: 14.5px; }
+.part .pl .num { font-family: var(--mono); color: var(--accent); margin-right: 6px; }
+.part select, .part input { width: 100%; font: 400 14.5px/1.4 var(--body); color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; min-width: 0; }
+.part select.ok, .part input.ok { border-color: var(--good); background: var(--good-soft); }
+.part select.no { border-color: var(--bad); background: var(--bad-soft); }
+.part .res { grid-column: 1 / -1; font-size: 13.5px; color: var(--muted); }
+.part .res b { color: var(--fg); font-weight: 500; }
+.part .res.good b { color: var(--good); }
+.part .res.bad b { color: var(--bad); }
+.ans { border-left: 3px solid var(--accent); padding: 4px 0 4px 12px; display: grid; gap: 6px; }
+.ans .model { font-weight: 500; }
+.ans .why { color: var(--muted); }
+.ans .ref { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+.verdict { font-family: var(--mono); font-size: 13px; font-weight: 500; }
+.verdict.good { color: var(--good); }
+.verdict.bad { color: var(--bad); }
+.self { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; font-size: 13px; color: var(--muted); }
+.self .btn[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); }
+.timer { font-family: var(--mono); font-size: 13px; font-weight: 500; color: var(--accent); font-variant-numeric: tabular-nums; border: 1px solid var(--accent); border-radius: 8px; padding: 7px 10px; }
+.timer.low, .timer.over { color: var(--bad); border-color: var(--bad); }
+.empty { color: var(--muted); text-align: center; padding: 40px 0; }
+footer { margin-top: 28px; color: var(--muted); font-size: 13px; }
+
+/* diagram drawing classes: every color comes from the theme tokens */
+.dg text { font-family: var(--body); font-size: 12.5px; fill: var(--fg); }
+.dg .bx { fill: var(--surface); stroke: var(--line); stroke-width: 1.3; }
+.dg .bx.k { stroke: var(--accent); }
+.dg .ln { stroke: var(--muted); stroke-width: 1.3; fill: none; }
+.dg .hd { fill: var(--muted); }
+.dg .jn { fill: var(--muted); }
+.dg .bl circle { fill: var(--accent); }
+.dg .bl text { fill: var(--surface); font-family: var(--mono); font-size: 11px; font-weight: 600; }
+.dg .mut { fill: var(--muted); font-size: 11.5px; }
+.dg .ttl { font-family: var(--mono); font-size: 12px; fill: var(--accent); font-weight: 500; }
+.dg .cell { stroke: var(--line); stroke-width: 1; }
+.dg .cellf { fill: var(--accent); }
+
+@media (max-width: 560px) {
+  .card, .sheet { padding: 14px; }
+  .q { font-size: 15px; }
+  .part { grid-template-columns: minmax(0, 1fr); }
+}
+@media (prefers-reduced-motion: no-preference) { .opt, .chip, .btn { transition: border-color .12s, background-color .12s; } }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="eyebrow">CS2883R · Quiz 3 · Mirror · SMWM · Dreamer 4 · FloWM</div>
+    <h1>Quiz 3 Drill</h1>
+    <p class="lede" id="lede"></p>
+  </header>
+
+  <div class="bar">
+    <div class="row" id="filters" role="toolbar" aria-label="Filter by paper"></div>
+    <div class="row">
+      <div class="score" id="score"></div>
+      <span class="timer" id="timer" role="timer" hidden></span>
+      <button class="btn" id="btnSheet" type="button">Show cheat sheet</button>
+      <button class="btn" id="btnMock" type="button">Mock quiz (10 questions, 10 min)</button>
+      <button class="btn" id="btnReset" type="button">Reset</button>
+    </div>
+  </div>
+
+  <div id="sheets" hidden></div>
+  <div class="list" id="list"></div>
+  <footer id="foot"></footer>
+</div>
+
+<script>
+/* ---------- diagram helpers (static, trusted strings) ---------- */
+const DG = (function () {
+  let n = 0;
+  const head = id => `<defs><marker id="${id}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="hd"/></marker></defs>`;
+  const box = (x, y, w, h, lines, cls) => {
+    const ls = [].concat(lines), cy = y + h / 2 - (ls.length - 1) * 8 + 4;
+    return `<rect class="bx${cls ? " " + cls : ""}" x="${x}" y="${y}" width="${w}" height="${h}" rx="6"/>` +
+      ls.map((t, i) => `<text x="${x + w / 2}" y="${cy + i * 16}" text-anchor="middle">${t}</text>`).join("");
+  };
+  const blank = (num, x, y) => `<g class="bl"><circle cx="${x}" cy="${y}" r="9.5"/><text x="${x}" y="${y + 4}" text-anchor="middle">${num}</text></g>`;
+  const path = (id, d) => `<path class="ln" d="${d}" marker-end="url(#${id})"/>`;
+  const sub = (b, s) => `${b}<tspan dy="3.5" font-size="9.5">${s}</tspan>`;
+  const dot = (x, y) => `<circle class="jn" cx="${x}" cy="${y}" r="2.6"/>`;
+  function smwm() {
+    const id = "ah" + (n++);
+    return `<svg class="dg" viewBox="0 0 690 318" role="img" aria-label="SMWM training diagram with three blanks">${head(id)}
+      ${box(16, 28, 64, 36, sub("o", "t+1"))}${box(104, 28, 104, 36, sub("encoder f", "θ"), "k")}${box(232, 28, 56, 36, sub("z", "t+1"))}
+      ${box(16, 228, 64, 36, sub("o", "t"))}${box(104, 228, 104, 36, sub("encoder f", "θ"), "k")}${box(232, 228, 56, 36, sub("z", "t"))}
+      <text class="mut" x="156" y="150" text-anchor="middle">same encoder</text>
+      ${box(336, 128, 132, 36, sub("inverse model h", "ψ"))}
+      ${box(336, 228, 132, 36, sub("forward model g", "φ"))}
+      ${box(370, 284, 64, 26, sub("a", "t"))}
+      ${box(604, 24, 76, 44, ["forward", "loss (MSE)"])}
+      ${box(530, 124, 84, 44, ["inverse loss", "(MSE)"])}
+      <text class="mut" x="572" y="186" text-anchor="middle">${sub("target: a", "t")}</text>
+      ${path(id, "M80 46 H104")}${path(id, "M208 46 H232")}${path(id, "M288 46 H604")}
+      ${path(id, "M80 246 H104")}${path(id, "M208 246 H232")}${path(id, "M288 246 H336")}
+      ${path(id, "M312 46 V138 H336")}${path(id, "M312 246 V154 H336")}${dot(312, 46)}${dot(312, 246)}
+      ${path(id, "M402 284 V264")}
+      ${path(id, "M468 246 H642 V68")}
+      ${path(id, "M468 146 H530")}
+      ${blank("①", 548, 246)}${blank("②", 497, 146)}${blank("③", 470, 46)}
+    </svg>`;
+  }
+  return { smwm };
+})();
+
+/* ---------- papers: cheat-sheet content ---------- */
+const PAPERS_ALL = {
+mirror: {
+  id: "mirror", short: "Mirror", name: "Self-Improving Video-to-Action Models",
+  meta: "arXiv 2610.24177 · Ryu, Chen, Wilcoxson, Sitzmann · MIT CSAIL · 2026",
+  gist: "视频模型可以当视觉规划器（VP）：给定历史帧和任务，生成「接下来该怎么做」的视频。把视频翻译成动作要靠 video-to-action（V2A，也叫逆动力学）模型，以往它需要大量人工采集的视频-动作配对数据。Mirror 让一个随机初始化的 V2A 模型对着专家级 VP 自我提升：VP 出计划 → V2A 猜动作（加探索噪声）→ 在环境里执行 → 用「实际执行的动作 + 实际到达的下一帧」训练 V2A。不需要专家动作标签、奖励、特权状态、verifier 或轨迹筛选。",
+  facts: [
+    "策略分两步采样：ô_{t+1} ∼ p_VP(· | o_≤t, l_task)，再 a_t ∼ p_V2A(· | o_≤t, ô_{t+1})。",
+    "式 (1) 两种分解：VP（action-free）× V2A（task-agnostic），对比 WM（action-bound）× policy（task-specific）。VP 从无动作的海量视频里同时学「做什么」（程序性知识）和「世界怎么响应」（物理知识）；留给 V2A 的只是一个与任务无关的「转移 → 动作」映射。",
+    "Alg. 1：采集时执行 a_t = V2A 的预测 + 噪声 n_t ∼ π_explore，把 (o_≤t, a_t, o_{t+1}) 存进 replay buffer；训练时最大化 log p_V2A(a_t | o_≤t, o_{t+1})。条件是实际到达的 o_{t+1}，不是计划的 ô_{t+1}，所以偏离计划的转移也是合法样本。",
+    "每个计划都以智能体真实观测到的帧为条件，从不以之前的计划为条件 → 偏离可以被纠正，误差不累积，不需要对付 exposure bias 的 anti-drift 技巧。",
+    "噪声的两个作用：(a) 只用自己 rollout 的数据训练，V2A 会塌成不管观测都输出同一个动作；(b) 把智能体带过还不会的里程碑：VP 不断重规划、反复提出同一个转移，随机动作迟早采到正确的那个，进入 buffer 后被学会。确定性的智能体会被卡死（Fig. 2）。",
+    "为什么比随机探索强：数据集中在「当前能力的前沿」；随机策略得先碰巧走完里程碑之前的整串动作，才有机会试那个关键动作（Fig. 1）。",
+    "VP：14B 的 Cosmos3-Nano（文本塔冻结，只微调视频塔）。Block-causal + KV cache：每个观测帧只编码一次，计划对着缓存双向去噪；滑动窗口注意力让每次规划成本恒定，32 s 片段上训练的规划器能跑 5 分钟以上的上下文。Task-aware guidance：用无任务条件的规划器去引导有任务条件的规划器，提高任务依从性。",
+    "Minecraft：VP 在 2,946 小时 VPT 视频上预训练；动作空间是 MineRL 1.0（20 Hz，20 个键 4000+ 种组合 + 连续鼠标），不简化。",
+    "BASALT（目标模糊、难验证）：V2A 从零自我对弈 5 小时（36 万步），FindCave 82%、MakeWaterfall 36%（用动作标签的版本是 91% / 45%）。第一个不靠分类器或写死动作、在 MakeWaterfall 上非零的方法。CreateAnimalPen、BuildVillageHouse 所有学习方法都是 0。",
+    "钻石挑战，离线设定（VP + 用 3k 小时 VPT 动作监督训练的 V2A，没有环境交互）：钻石 5.5%，Dreamer 4 是 0.7%，近 8 倍。",
+    "钻石挑战，在线自我提升（无动作标签、无奖励），140 小时（约 1000 万步）：石镐 72.7%、铁镐 15.6%（Dreamer V3 同预算铁镐 1.7%）。还拿不到钻石。",
+    "子目标：启发式任务规划器根据背包、血量、是否打开 GUI 选文本提示，只给 VP；V2A 从不知道子目标。Dreamer 4 则是给 policy 喂 one-hot 任务嵌入。",
+    "Oracle VP（专家策略 + 同步的环境副本渲染出「计划」帧，专家动作不给 V2A 看）：约 80 小时第一次拿到钻石 → 剩下的瓶颈是 VP 的能力，不是自我提升算法。",
+    "涌现能力：保留死亡之间的视频历史，逃出岩浆湖的成功率上升（in-context learning from failure；每条命重置历史只有 3%）。文本零样本操控 10 个任务：自我提升 V2A 64%，监督 V2A 71%，随机游走 V2A 42%。",
+    "24 个 RL 任务（13 DMC + 4 OGBench + 7 Atari，1M 步）：生成式 VP 下 Atari 62% expert、OGBench 0.92；oracle VP 下 Atari 99%。基线：BCO（自己 rollout 学 V2A 再去克隆，没有 VP 引导采集）、Grounding（Luo & Du：学目标条件策略去够视频预测的子目标）、VIPER（视频似然当奖励）、LAIfO（对抗匹配）。",
+    "Assault、Zaxxon 上超过专家 10%、25%：专家有多余的开火指令（画面上没产生新子弹），V2A 只需复现画面变化，不必照抄。",
+    "局限：小时级任务要靠外部子目标规划器；纯自我提升还到不了钻石（不完美的 V2A 把智能体带到人类很少去的状态，VP 泛化不够）；有些动作在画面上不留痕迹，纯视觉从零推断是不适定的；训练鲁棒的 VP 很吃数据（专家策略的数据缺少多样性，要用 DAgger 补恢复样本）。"
+  ]
+},
+smwm: {
+  id: "smwm", short: "SMWM", name: "Sensorimotor World Models: Perception for Action via Inverse Dynamics",
+  meta: "arXiv 2606.20104 · Ivashkov, Balestriero, Schölkopf · MPI-IS Tübingen / Brown · 2026",
+  gist: "JEPA 式潜空间世界模型在嵌入空间里预测下一状态，编码器和预测器端到端一起训练时，编码器会塌缩成常数。SMWM 只加一个正则：逆动力学头从 (z_t, z_{t+1}) 预测动作 a_t，梯度传回编码器，L = L_fwd + λ·L_inv。这一个正则同时做两件事：防塌缩，并让表征对齐「可控自由度」、丢掉不可控的干扰物（perception for action）。不用冻结编码器、EMA、stop-gradient，也不给嵌入分布加先验。",
+  facts: [
+    "三个模块：编码器 f_θ：o → z；前向模型 g_φ(z_t, a_t) → ẑ_{t+1}；逆模型 h_ψ(z_t, z_{t+1}) → â_t。两个损失都是 MSE。前向损失更新 f 和 g，逆损失更新 f 和 h，编码器吃两路梯度。",
+    "只有 L_fwd 时的平凡解：f 把所有观测映到常数 z*，g 也输出 z*，损失为 0。",
+    "逆损失为什么防塌缩：塌缩时逆模型对所有转移的输入都一样，最优输出只能是常数 E[a]，风险 E‖a − E[a]‖²；要比它低，(z_t, z_{t+1}) 必须保留能预测 a_t 的信息。",
+    "别的防塌缩办法：DINO-WM 冻结预训练编码器；PLDM 用多项方差-协方差正则（还有时间平滑、逆动力学）；LeWM 用 SIGReg 把嵌入匹配到各向同性高斯；V-JEPA 2 用 EMA 目标编码器 + stop-gradient。SIGReg 规定了嵌入空间的几何；逆动力学不规定几何，只把表征锚在动作上。",
+    "设定：离线转移 (o_t, a_t, o_{t+1})，连续动作；不需要奖励、任务标签、行为策略。",
+    "Dot world（64×64 画布，状态 (x, y)，动作 (Δx, Δy)，潜维度 64）：PCA 只有 2 个主成分有方差，其余 62 维塌掉；状态网格映成近似正方的网格（保拓扑），只差一个旋转和符号。没有任何状态监督。",
+    "等变：前向损失鼓励 f(a(o)) ≈ g_a(f(o))，编码器和前向模型可交换（Fig. 3 的交换图）。Theorem 1：A 是半群且 f 等变 ⇒ a ↦ g_a 在 f(O) 上是同态，g_{a2∘a1} = g_{a2} ∘ g_{a1}。",
+    "实际学到 g_a(z) ≈ z + ρ(a)：动作成了潜空间里的平移。没有损失项强制这点；逆损失提供偏置：把动作编码进位移 z_{t+1} − z_t ≈ ρ(a_t) 是让动作可解码的最简单方式。",
+    "等变本身允许退化解（包括塌缩），还需要 faithfulness / 动作可辨识：对 O 有非平凡作用的动作在 f(O) 上也要有非平凡作用。这正是逆模型提供的。",
+    "Fig. 4：有效潜维度 = 可控自由度：Independent 4、Coupled 2、Distractor 2、Combined 6。随机移动的干扰点被忽略：它与 a_t 独立（对 L_inv 没用），又随机演化（预测不了，只会抬高 L_fwd）。",
+    "三角形 sprite（位姿 x, y, θ）：不可控的自由度被「平均掉」。旋转不可控时，事后训练的解码器重建出一团朝向平均的 blob；x/y/θ 全可控时重建清晰。",
+    "规划（沿用 LeWM 设置）：编码当前帧和目标帧，前向模型自回归展开候选动作序列，代价 ‖ẑ_{H+1} − z_g‖²，用 CEM 优化，外面套 receding-horizon MPC（只执行前 K 个动作就重新编码、重规划）。f 和 g 冻结，只优化动作。",
+    "架构：ViT-Tiny（约 5M）的 CLS token 投影到 d = 192；预测器是小 transformer（约 10M），动作用 AdaLN-zero 注入，历史长度 1；逆模型是 2 层 MLP（宽 256），输入 [z_t; z_{t+1}]。",
+    "规划结果（50 步预算，目标在 25 步之外，5 个种子）：三个 2D 任务（TwoRoom、Reacher、Push-T）和 SIGReg 基线大致持平；OGBench-Cube（3D、5 维动作）84% 对 59%。Forward-only（λ = 0）和随机动作都远差。",
+    "探针：两种正则方法用 MLP 探针都几乎完美恢复物理状态（Push-T 方块位姿除外）；Forward-only 明显更差，但很少完全退化。",
+    "潜几何：TwoRoom 里墙在潜空间留下一条空带；Reacher 的两个周期角构成环面 T²，嵌成 (cos θ1, sin θ1, cos θ2, sin θ2)，谱里有 4 个明显主成分，3D 投影呈圆柱。",
+    "只多一个超参 λ，但要按环境调：λ = 0.1 在 TwoRoom 最好，却让 Reacher 塌到接近随机。Dot world 用 λ = 10。",
+    "和 ICM 的区别：ICM 的编码器只吃逆损失的梯度（前向损失的目标是 stop-gradient），编码器只用来算内在奖励；SMWM 的编码器吃两路梯度，本身就是世界模型的编码器。",
+    "局限：假设动作能从相邻两帧恢复（不同动作造成同样的可见变化时失效）；单帧编码器拿不到速度这类量；动作对齐的偏置可能丢掉下游任务需要的信息；有偏的行为策略会造出「与动作相关但不可控」的干扰物；只在中等规模的仿真任务上验证。"
+  ]
+},
+dreamer4: {
+  id: "dreamer4", short: "Dreamer 4", name: "Training Agents Inside of Scalable World Models",
+  meta: "arXiv 2509.24527 · Hafner, Yan, Lillicrap · Google DeepMind · 2025",
+  gist: "Dreamer 4 在一个又快又准的世界模型里做强化学习（imagination training）。世界模型 = 因果 tokenizer（MAE 训练，连续潜变量）+ 交互式动力学模型（shortcut forcing 目标，每帧只要 K = 4 次前向），两者用同一种高效 block-causal transformer。三个阶段：世界模型预训练 → 插入 agent token，微调出行为克隆策略和奖励模型 → 在想象里用 PMPO 训练策略头。只用 2.5K 小时 VPT 离线数据，第一次在不与环境交互的情况下拿到 Minecraft 钻石。",
+  facts: [
+    "记号：x_τ = (1 − τ)·x_0 + τ·x_1，x_0 是噪声。τ 是 signal level：τ = 0 纯噪声，τ = 1 干净数据。序列时间步是 t，步长是 d。",
+    "Shortcut model：网络同时以 τ 和步长 d 为条件。最细步长 d_min 用 flow matching 损失；更大的步长用 bootstrap 损失，把同一个网络的两个半步蒸馏成一步，目标 sg(b′ + b″)/2。推理时选 d = 1/K，不需要 teacher。",
+    "Diffusion forcing：序列里每个时间步有自己的 signal level，每一步既是去噪任务，又是后面时间步的上下文。",
+    "Shortcut forcing = diffusion forcing + shortcut model，并改成 x-prediction：网络直接预测干净潜变量 ẑ_1。理由：v-prediction 让网络输出高频成分，逐帧自回归生成长视频时小误差会累积。bootstrap 项先换到 v 空间，再乘 (1 − τ)² 换回 x 空间的量级。",
+    "Ramp 权重 w(τ) = 0.9τ + 0.1：低 signal level 学习信号少（flow 项退化成预测数据集均值），把模型容量集中到信号多的地方。",
+    "推理：时间上自回归，每帧 K = 4 步（d = 1/4）。把历史输入轻微加噪（原文写 τ_ctx = 0.1），让模型对自己生成的小瑕疵鲁棒。",
+    "Tokenizer：编码器、解码器在时间上因果，可以逐帧解码；潜 token 经线性投影 + tanh 得到低维连续表征（没有 codebook）；损失 MSE + 0.2·LPIPS；MAE：每张图以 p ∼ U(0, 0.9) 的概率丢 patch，作者发现这改善了生成视频的空间一致性。",
+    "动力学的输入序列：动作、(τ, d) token、带噪潜变量、register token 交错。没有动作标签的视频只用一个 learned embedding 代替动作。",
+    "Agent token：接收任务嵌入，用来预测策略和奖励。它可以注意所有模态，但其他模态不能注意它 → 世界模型的未来预测只受动作影响、不受任务影响，避免 causal confusion。",
+    "阶段 2：行为克隆 + 奖励模型，multi-token prediction（L = 8），同时继续加视频预测损失。奖励头用 symexp twohot。",
+    "阶段 3：只更新策略头和价值头，transformer 冻结。rollout 从数据集的上下文出发，每个上下文只展开一条。价值头用 TD 学 λ-return（γ = 0.997）。",
+    "PMPO：只用 advantage 的符号、不看大小 → 不用归一化 return，各任务等权。正、负集合各自平均（α = 0.5），再加对冻结 BC 策略先验的 KL（β = 0.3，方向与原版 PMPO 相反）。",
+    "高效 transformer：空间注意力和时间注意力分开；每 4 层才有一层时间注意力（更快，质量也更好）；GQA 减小 KV cache；register token；长短 batch 交替训练。",
+    "规模：2B 参数（tokenizer 400M + 动力学 1.6B）；Minecraft 用 256 个空间 token、192 帧上下文（9.6 s）；单张 H100 上 21 FPS，超过游戏的 20 FPS。",
+    "离线钻石挑战（1000 个 60 分钟 episode，随机世界、空背包）：石镐之前都 > 90%，铁镐 29%，钻石 0.7%。VPT（finetuned）只到木棍 53%，它用了 270K 小时标注视频，Dreamer 4 少 100 倍。VLA（Gemma 3）铁镐 11%。",
+    "消融（Fig. 4）：WM+BC（想象训练之前）已经强于从头 BC 和 Gemma 3 VLA → 视频预测学到的表征对决策有用。想象训练既提高成功率，也缩短到达里程碑的时间，越难的里程碑提升越大。",
+    "数据混合：50% 均匀采样的序列 + 50% 完成了某个任务的相关序列。BC 损失只加在相关序列上，动力学损失只加在均匀序列上，避免世界模型生成得过于乐观。",
+    "人在世界模型里玩（16 个任务）：Dreamer 4 完成 14 个；Oasis（large）5 个，会「自动补全」出玩家没建过的结构；Lucid-v1 0 个。",
+    "动作泛化：2541 小时视频里只给 100 小时动作 → 相对全动作模型 85% PSNR、100% SSIM。只给主世界的动作，在下界、末地（只见过无标签视频）仍有 76% PSNR、80% SSIM。",
+    "表 2 级联（FVD）：diffusion forcing transformer，K = 64：306（0.8 FPS）→ K = 4：875 → + shortcut：329 → + x-prediction、x-loss、ramp：102 → … → 完整模型 57（21.4 FPS）；同架构换回 v 空间是 124。Fig. 8：shortcut forcing 4 步接近 diffusion forcing 64 步，快 16 倍。"
+  ]
+},
+flowm: {
+  id: "flowm", short: "FloWM", name: "Flow Equivariant World Models: Structured Memory for Dynamic Environments",
+  meta: "arXiv 2601.01075 · Lillemark, Huang, Zhan, Du, Keller · Harvard Kempner / UCSD / CMU · ICML 2026",
+  gist: "部分可观测的动态环境里，每次观测只露出世界的一小块，看不见的地方还在继续演化。现有视频世界模型要么把窗口外的帧丢掉，要么用与视角绑定的无结构记忆，一转回头就幻觉。FloWM 把自身运动和外部物体运动都看成「流」（时间参数化的对称变换），让潜在记忆随这些流等变地变换：记忆是一张跟着智能体走的空间地图，每步按动作的逆变换移动（self-motion equivariance），再用若干按各自速度流动的 velocity channel 搬运视野外的运动物体。",
+  facts: [
+    "等变：ϕ(g·f) = g·ϕ(f)。流等变把它推广到时间参数化的变换 ψ_t(ν)（由向量场 ν 生成）：输入序列被流作用，输出序列也按同一个流变换（式 1）。直白说：输入随时间移动，输出也跟着移动。不变性则是输出不变，两者别混。",
+    "部分可观测时，流作用在看不见的世界状态 w_t 上，观测 f_t = O(w_t)。世界流在观测里不一定表现成流：O(ψ_t·w_t) ≠ ψ_t·f_t，例如身后驶来的车。要求对世界状态等变（式 2）⇒ 隐状态必须是一张忠实的「记忆地图」，物体在不在视野里都要同样变换。",
+    "实现流等变的充分条件：在输入的 co-moving 参照系里计算，合并新观测之前先用同一个流搬运记忆：h_{t+Δt} = σ(ψ_Δt(ν)·h_t + f_t)。",
+    "Velocity channels：隐状态有多份，每份按自己的 ν ∈ V 流动（隐状态定义在 V × G 上）。输入以速度 ν̂ 流动时，输出跟着流动，通道按 (ν − ν̂) 置换（式 3）。",
+    "广义递推（式 4）：h_{t+1}(ν) = ψ_1(ν)·U_θ[h_t(ν); E_θ[f_t; h_t](ν)]。要求编码器 E 和更新 U 都对群作用等变（式 5、6），且 E 对所有速度通道做 trivial lift（各通道拿到相同的输出）。",
+    "Self-motion equivariance：运动是相对的，自身运动等价于输入的整体运动。动作已知，所以把隐状态按 T_{a_t}^{-1} 变换即可，不需要增加速度通道（式 7）。2D 平移时就是 ψ_1(−a_t)，和内部流合成 ψ_1(ν − a_t)。副产品：记忆的空间结构与世界同态，像一张地图。",
+    "Simple Recurrent FloWM（MNIST World）：h_{t+1}(ν) = ψ_1(ν − a_t)·σ(W⋆h_t(ν) + pad(U⋆f_t))。只在视野窗口处写入、读出，其余隐状态绕着视野流动；读出时对速度通道逐像素 max-pool 再解码。|V| = 25（速度 ±2），实现上就是把隐状态 roll (ν − a_t) 个像素。",
+    "Transformer-Based FloWM（3D Block World）：隐状态是一张俯视 2D 的 token 地图。ViT 编码器吃图像 patch + 当前视野（三角楔形）里的记忆 token；更新 = 把输出加回地图的对应位置；再按动作（平移、90° 旋转）和内部流变换；ViT 解码器对新视野的 token 做 cross-attention，预测下一帧。|V| = 5。",
+    "3D 编码器不是按设计严格等变的：不做昂贵的深度反投影，而是「当它等变」，靠步与步之间的 T_a^{-1}ψ_1(ν) 变换促使它学会等变。探针测得等变误差训练前 6.96 → 训练后 0.22（DFoT 2.36）。",
+    "MNIST World：数字匀速运动，边界循环，智能体每步随机平移视角。给 50 帧观测，训练预测 20 帧，测试外推到 150 帧。FloWM 到 150 帧仍贴合真值（MSE 0.0018）。",
+    "消融（表 1）：no VC 随时间发散（0.0041 → 0.0334）；no SME 直接失败（约 0.12，基本就是卷积 RNN）；把动作拼进输入（action-concat）也救不回来。SME + VC 收敛所需步数少几个数量级。结论：SME 是解题关键，VC 提高精确度和收敛速度，代价是更大的隐状态。",
+    "基线的失败方式：DFoT（History-guided Diffusion Forcing）很快偏离，生成像数字的伪影，MSE 比全黑图还差；DFoT-SSM 的数字慢慢褪成黑色（SSM 记忆衰减）；DreamerV3 RSSM 糊成许多方块的平均。",
+    "3D Dynamic Block World（Miniworld）：彩色方块匀速运动、碰墙反弹；4 个离散动作（左转、右转、前进、不动）。训练：50 帧上下文预测 90 帧；评测：给 70 帧，预测 70 / 210 帧。FloWM 到 210 帧仍一致。",
+    "探针解码方块位置：FloWM 96%，DFoT 和 DFoT-SSM 不到 1%。",
+    "规划「找红方块」（奖励 = 画面里的红色像素，MPC 穷举，搜索深度 3）：FloWM 很快到位；基线常常幻觉出一个红方块并追过去。",
+    "作者的判断：现有世界模型的瓶颈主要不在视觉复杂度，而在预测一致的环境动力学。DFoT 的训练目标不区分观测帧和预测帧，FloWM 区分。",
+    "相关工作：Neural Map 的一个变体可看作没有速度通道的 FloWM；WORLDMEM 按相机位姿检索旧帧，处理不了动态场景；DFoT-SSM 的 SSM 主要是记住与视角绑定的观测，不预测视野外的状态。",
+    "局限：受控环境、刚体几何动作、已知的动作参数化；速度集合 V 是离散的。未来方向：更强的扩散解码器、自适应大小的潜在地图、更丰富的动作空间、与 JEPA 目标结合。"
+  ]
+},
+cross: {
+  id: "cross", short: "Cross-paper", name: "Cross-paper links",
+  meta: "四篇放在一起看",
+  gist: "四篇都在回答同一个问题的不同部分：世界模型（或视频模型）要学成什么样，才能真的拿来做决策。Dreamer 4：学一个带动作条件的世界模型，在里面做 RL。Mirror：把「做什么」留给无动作的视频规划器，只学一个逆动力学模型把视频落到动作上。SMWM：用逆动力学当正则，让潜表征只保留可控的东西。FloWM：让潜在记忆按自身运动和物体运动等变，解决部分可观测。",
+  facts: [
+    "分解方式：Dreamer 4 = WM（action-bound）+ policy（task-specific）；Mirror = VP（action-free）+ V2A（task-agnostic）。同一设定下（离线、有动作标签）钻石 0.7% 对 5.5%。",
+    "逆动力学的两种用法：SMWM 拿它当防塌缩正则，塑造编码器，不用于控制；Mirror 的 V2A 就是策略里输出动作的那一半。共同的弱点：动作必须能从画面变化里看出来。",
+    "谁需要什么数据：SMWM 每条转移都要动作；Dreamer 4 只要一小部分视频带动作（100 / 2541 小时就学到大部分动作条件），但训练策略还要动作和奖励标注；自我提升的 Mirror 不要专家动作和奖励，但必须在线交互；FloWM 需要已知的自身运动动作。",
+    "对付长 rollout 的误差：Dreamer 4 用 x-prediction + 轻微加噪的上下文；Mirror 每次从真实观测重新规划；FloWM 用结构化记忆持续跟踪视野外的动态；SMWM 规划时用 receding-horizon MPC。",
+    "动作与潜空间变换：FloWM 把动作对记忆的变换写进架构（已知的群表示）；SMWM 里 f(a(o)) ≈ g_a(f(o)) 和平移结构是从损失里涌现的。",
+    "生成式还是 JEPA：Dreamer 4（潜空间流匹配 + 解码器）、Mirror 的 VP（视频扩散）、FloWM（ViT 解码器预测下一帧）都预测可解码成像素的内容；SMWM 完全在嵌入空间里预测，没有重建。",
+    "记号陷阱：Dreamer 4 的 τ = 1 是干净数据；Mirror 的 VP 用 x_τ = (1 − τ)x + τ·ε，τ = 1 是噪声。"
+  ]
+}
+};
+
+/* ---------- questions ---------- */
+const QS_ALL = [
+// ---------- Mirror ----------
+{ p: "mirror", core: true, type: "mc", q: "In Mirror, what is the training target of the video-to-action (V2A) model, and what is it conditioned on?",
+  opts: ["The action the agent actually executed, conditioned on past frames and the next frame it actually reached", "The action the agent actually executed, conditioned on past frames and the next frame the planner generated", "The expert's action from a labeled demonstration, conditioned on consecutive demonstration frames", "A latent action inferred from the planner's video, conditioned on the planned next frame"],
+  a: 0, why: "Alg. 1：最大化 log p_V2A(a_t | o_≤t, o_{t+1})，o_{t+1} 是执行后真实到达的帧，不是计划的 ô_{t+1}。所以即使偏离了计划，这条转移也是标签正确的训练样本。", ref: "§3.1, Alg. 1" },
+{ p: "mirror", core: true, type: "mc", q: "Mirror factorizes the agent into a video planner (VP) and a V2A model instead of a world model (WM) and a policy. Which labeling matches Eq. 1?",
+  opts: ["VP is action-free, V2A is task-agnostic; WM is action-bound, policy is task-specific", "VP is task-agnostic, V2A is action-free; WM is task-specific, policy is action-bound", "VP is action-bound, V2A is task-specific; WM is action-free, policy is task-agnostic", "VP is action-free, V2A is task-specific; WM is action-bound, policy is task-agnostic"],
+  a: 0, why: "VP 不需要动作，可以在网络视频上预训练，同时学程序性知识和物理知识；V2A 只是「转移 → 动作」的映射，与任务无关，所以自己产生的任何转移都能拿来训练。WM + policy 两部分都得从稀缺的带动作数据里学。", ref: "§3, Eq. 1" },
+{ p: "mirror", core: true, type: "mc", q: "During data collection Mirror adds exploration noise to the V2A model's action. At a milestone the V2A model has not learned yet (e.g., the first time a block must be mined), what would happen to a deterministic agent?",
+  opts: ["The planner keeps re-proposing the same transition, but the agent never produces the action that achieves it and stays blocked", "The planner gives up on the milestone and moves on to a later part of the plan, so that skill is never practiced or learned", "The agent's errors compound from step to step, because every new plan is conditioned on the previously generated plan", "The V2A model overfits to the planner's generated frames and gradually stops paying attention to the real observations"],
+  a: 0, why: "噪声有两个作用：防止 V2A 塌成同一个动作；在里程碑处「撞」出正确动作，这条转移进入 buffer 后被学会，以后就能过（Fig. 2）。", ref: "§3.1, Fig. 2" },
+{ p: "mirror", core: true, type: "mc", q: "Why do errors not compound over time in Mirror's closed-loop rollouts, so that no anti-drift technique is needed?",
+  opts: ["Every plan is conditioned on the frames the agent actually observed, never on its previous plans", "The planner's context frames are lightly noised, so it tolerates its own imperfect generations", "The planner predicts clean frames directly instead of velocities, which avoids high-frequency errors", "A verifier discards rollouts whose frames diverge from the plan before they are used"],
+  a: 0, why: "第二、三个选项是 Dreamer 4 的做法。Mirror 从不把自己生成的帧喂回规划器：每次都从真实到达的状态重新规划。Mirror 也不需要 verifier 或轨迹筛选。", ref: "§3" },
+{ p: "mirror", core: true, type: "mc", q: "Why is planner-guided self-play far more effective than random exploration for collecting V2A training data on long-horizon tasks?",
+  opts: ["Its data concentrates at the frontier of what the agent can currently follow; a random policy rarely reaches late-stage transitions", "Random exploration yields transitions whose action labels are noisy, whereas planner-guided transitions come with exact action labels", "Random transitions cannot be relabeled in hindsight with the achieved frame, whereas planner-guided transitions can be relabeled", "It lets the V2A model train on the planner's generated frames, which are cleaner and more consistent than the frames the agent observes"],
+  a: 0, why: "两种数据的标签都是「自己执行的动作」，都精确；区别在于覆盖了哪些状态。抓取、合成钻石镐这类关键转移，随机策略得先碰巧走完前面的整串动作（Fig. 1）。", ref: "§1, §3.1, Fig. 1" },
+{ p: "mirror", type: "mc", q: "In the Minecraft diamond experiments, how does Mirror use subgoals?",
+  opts: ["A heuristic task planner picks a text prompt from inventory, health and GUI state; only the video planner sees it", "Both the video planner and the V2A model receive a one-hot task embedding for the current subgoal, as in Dreamer 4", "A vision-language model selects subgoals from the current frame and passes them to the V2A model as a text prompt", "No subgoals are used: the video planner alone covers the hour-long horizon, as it does on the BASALT tasks"],
+  a: 0, why: "Dreamer 4 把 one-hot 任务嵌入给 policy；Mirror 只条件化 VP，V2A 从不知道子目标，保持 task-agnostic。「小时级任务需要外部子目标规划器」是作者列出的局限。", ref: "§4.1.2, §5" },
+{ p: "mirror", core: true, type: "mc", q: "What does the oracle video planner experiment (plans rendered by an expert policy in a synchronized copy of the game) show?",
+  opts: ["With a near-perfect planner, self-play reaches diamonds in about 80 hours, so the remaining bottleneck is the video planner", "Self-improvement only works when the planner is perfect, so generative video planners are not yet usable for this method", "The V2A model needs the expert's actions in addition to its rendered frames before it can reach the diamond milestone", "The oracle and the generative planner reach the same milestones, so the planner's quality is not what limits the agent"],
+  a: 0, why: "专家的动作从不给 V2A 看；oracle 只是输入输出和 VP 相同的「理想规划器」。Atari 上同样：oracle VP 99% expert，生成式 VP 62%。", ref: "§4.1.2, §4.2" },
+{ p: "mirror", type: "mc", q: "On Assault and Zaxxon, Mirror with an oracle planner exceeds the expert's return by 10% and 25%. What explanation do the authors give?",
+  opts: ["The expert issues redundant fire commands that produce no new shots; the V2A model follows the plan without copying them", "Exploration noise is kept at test time and occasionally discovers strategies that score higher than the expert's own play", "The video planner extrapolates beyond the expert's skill level, thanks to its pretraining on web-scale video of other games", "The V2A model is trained with an extra bonus for reaching the planned frames in fewer steps than the expert needed"],
+  a: 0, why: "V2A 学的是「哪个动作产生这个画面变化」，不是克隆专家的按键。", ref: "§4.2" },
+{ p: "mirror", type: "mc", q: "Which pair of Minecraft results does the paper report?",
+  opts: ["Self-improving, no labels: iron pickaxe 15.6% after ~140 h. Offline with action labels: diamonds 5.5% vs. 0.7% for Dreamer 4", "Self-improving, no labels: diamonds 5.5% after ~140 h. Offline with action labels: diamonds 15.6% vs. 0.7% for Dreamer 4", "Self-improving, no labels: iron pickaxe 0.7% after ~140 h. Offline with action labels: iron pickaxe 29%, matching Dreamer 4", "Self-improving, no labels: diamonds 0.7% after ~80 h. Offline with action labels: diamonds 5.5%, matching VPT"],
+  a: 0, why: "纯自我提升（生成式 VP）到铁镐为止，还拿不到钻石；oracle VP 约 80 小时拿到钻石。BASALT 上只自我对弈 5 小时：FindCave 82%、MakeWaterfall 36%。", ref: "§4.1.1, §4.1.2, Fig. 5" },
+{ p: "mirror", type: "mc", q: "How do BCO and 'Grounding' (Luo & Du, 2024) differ from Mirror, according to the discussion of Fig. 8?",
+  opts: ["BCO also learns a V2A model from its own rollouts, but with no planner guiding data collection; Grounding learns a goal-conditioned policy to reach video-predicted subgoals", "BCO uses the likelihood under a video prediction model as its reward; Grounding matches expert and agent transitions adversarially through a learned discriminator", "BCO trains on expert action labels taken from demonstrations; Grounding trains on rewards from a discriminator that compares agent and expert frames", "BCO learns a goal-conditioned policy toward video-predicted subgoals; Grounding pseudo-labels expert videos with a V2A model learned from its own rollouts"],
+  a: 0, why: "视频似然当奖励的是 VIPER，对抗匹配的是 LAIfO。BCO 差 → 用 VP 引导采集很重要；Grounding 仍差 → 「逐帧转移 → 动作」比「目标条件策略」好学。", ref: "§4.2, Fig. 8" },
+{ p: "mirror", type: "multi", q: "Select ALL statements that are true of Mirror.",
+  opts: ["In the self-improving setting the V2A model is initialized from scratch and never sees expert action labels", "Training needs a reward function or a success verifier to filter the collected trajectories", "A transition that deviates from the plan is still a valid training example for the V2A model", "The video planner re-plans from the state the agent actually reached", "The V2A model is conditioned on the text description of the task", "Retaining video history across deaths raised the lava-lake escape rate, a sign of in-context adaptation"],
+  a: [0, 2, 3, 5], why: "不需要奖励、特权状态、verifier 或轨迹筛选。任务只给 VP，V2A 是 task-agnostic 的。", ref: "§1, §3, §4.1.3" },
+{ p: "mirror", core: true, type: "parts", q: "Complete Mirror's training loop (Algorithm 1).",
+  code: [["c", "# data collection, one step\n"], ["", "plan    ~ VP( · | "], ["b", "①"], ["", ", task )\n"], ["", "a_t     ~ V2A( · | o_≤t, plan )\n"], ["", "a_t     = a_t + "], ["b", "②"], ["", "\n"], ["", "o_{t+1} = env.step(a_t)\n"], ["", "buffer.add( o_≤t, a_t, o_{t+1} )\n\n"], ["c", "# V2A update on batches from the buffer\n"], ["", "maximize  log p_V2A( a_t | o_≤t, "], ["b", "③"], ["", " )"]],
+  parts: [
+    { label: "① the planner is conditioned on", choices: ["its own previously generated plan frames", "frames the agent actually observed, o_≤t", "expert demonstration frames of the same task"], a: 1 },
+    { label: "② what is added to the action", choices: ["exploration noise n_t ∼ π_explore", "a residual toward the expert's action", "nothing during training; noise is added only at test time"], a: 0 },
+    { label: "③ the V2A update is conditioned on", choices: ["the planned next observation ô_{t+1}", "the task prompt l_task", "the achieved next observation o_{t+1}"], a: 2 },
+    { label: "Why is the noise in ② needed? Give two reasons.", text: "(1) Trained only on its own noiseless rollouts, the V2A model would collapse to predicting the same action regardless of the observations. (2) At a milestone it cannot yet execute, random actions eventually produce the planned transition, which enters the buffer and is then learned." }
+  ],
+  why: "三个空对应论文的三个关键设计：计划从真实观测出发（误差不累积）、加噪声（防塌缩 + 过里程碑）、用实际到达的帧做条件（任何转移都是合法样本）。", ref: "§3.1, Alg. 1" },
+{ p: "mirror", core: true, type: "sa", q: "What does Mirror assume access to, and what does it NOT need?",
+  a: "It assumes an expert-level video planner (pre-trained on action-free video) and the ability to interact with the environment. It needs no expert action labels and no hand-crafted rewards, and also no privileged state, verifier or trajectory filtering.",
+  why: "一句话：把赌注押在视频模型会继续变强上，规划器的能力不靠额外的专家动作数据就能翻译成动作。", ref: "§1" },
+{ p: "mirror", core: true, type: "sa", q: "Why can the V2A model be trained on the agent's own, initially poor, rollouts while a task policy could not?",
+  a: "The V2A model only maps an observed transition (o_≤t, o_{t+1}) to the action that caused it; it is task-agnostic. Whatever the agent did, the executed action is a correct label for the transition it produced, so even failed attempts are valid examples. The task knowledge stays in the planner, which steers which transitions get collected.",
+  why: "关键词：task-agnostic；用实际到达的 o_{t+1} 做条件；VP 负责「做什么」。", ref: "§3, §3.1" },
+{ p: "mirror", core: true, type: "sa", q: "Explain how re-planning and exploration noise together get the agent past a milestone it has never achieved.",
+  a: "When the V2A model outputs the wrong action, the planned transition does not happen; the planner re-plans from the real state and proposes the same transition again, holding the agent at the milestone. Noise eventually samples the correct action, that transition enters the replay buffer, the V2A model learns it, and later episodes pass the milestone.",
+  why: "对比随机探索：它得先碰巧走完到里程碑之前的整串动作。", ref: "§3.1, Fig. 1–2" },
+{ p: "mirror", type: "sa", q: "Name two limitations the authors acknowledge.",
+  a: "Any two: (1) the hour-long diamond task needs a separate heuristic subgoal planner; (2) with self-improvement alone the agent reaches the iron pickaxe but not diamonds, because an imperfect V2A model leads to unusual states the planner does not generalize to; (3) some actions leave no visible trace, so inferring them from vision alone is ill-posed; (4) training a robust planner is data-intensive (expert-policy data needed DAgger recovery data).",
+  why: "第 3 条和 SMWM 的局限是同一个问题：逆动力学只能恢复看得见后果的动作。", ref: "§5" },
+
+// ---------- SMWM ----------
+{ p: "smwm", core: true, type: "mc", q: "In SMWM, which mechanism prevents the encoder from collapsing to a constant embedding?",
+  opts: ["An inverse dynamics head that predicts the action from (z_t, z_{t+1}) and backpropagates into the encoder", "A stop-gradient target that is produced by an exponential-moving-average copy of the online encoder", "A regularizer that matches the distribution of embeddings to an isotropic Gaussian via random projections", "A variance–covariance penalty that keeps every embedding dimension active and decorrelated from the others"],
+  a: 0, why: "后三个分别是 V-JEPA 2、LeWM（SIGReg）、PLDM（VICReg 式）的办法。SMWM 只用逆动力学这一项。", ref: "§1, §3, Fig. 1" },
+{ p: "smwm", core: true, type: "mc", q: "Why does the forward loss L_fwd = ‖g(z_t, a_t) − z_{t+1}‖² alone admit a trivial solution?",
+  opts: ["If the encoder maps every observation to the same z* and the predictor outputs z*, the loss is exactly zero", "The predictor can simply copy z_t to its output, because consecutive frames are almost identical in pixel space", "The encoder can memorize the training set, because the loss is never evaluated on held-out transitions", "Without rewards the predictor receives no signal about which futures matter, so it predicts the average future"],
+  a: 0, why: "预测和目标都出自同一个编码器，两边一起变成常数就「完美预测」了，但表征不带任何信息。", ref: "§3" },
+{ p: "smwm", core: true, type: "mc", q: "Why can a collapsed encoder not achieve a low inverse loss?",
+  opts: ["The inverse head would get identical inputs for every transition, so its best output is the constant mean action", "The inverse head has too few parameters to memorize the action of each transition", "The inverse loss is computed on a stop-gradient copy of the embeddings, so a constant gives no gradient", "The inverse loss contains an explicit variance term that penalizes constant embeddings"],
+  a: 0, why: "常数预测器的风险是 E‖a − E[a]‖²。要比它低，(z_t, z_{t+1}) 必须携带能预测 a_t 的信息，这就排除了完全塌缩。", ref: "§3" },
+{ p: "smwm", core: true, type: "mc", q: "Which parameters does each loss update in SMWM?",
+  opts: ["L_fwd updates the encoder and forward model; L_inv updates the encoder and inverse model", "L_fwd updates only the forward model; L_inv updates the encoder and inverse model", "L_fwd updates the encoder and forward model; L_inv updates only the inverse model", "Each loss updates only its own head; the encoder is frozen after pretraining"],
+  a: 0, why: "第二个选项是 ICM 的做法（前向损失的目标 stop-gradient，编码器只吃逆损失）；第四个像 DINO-WM。SMWM 的编码器吃两路梯度，没有 stop-gradient，也没有 EMA。", ref: "§3, App. A.1, App. H" },
+{ p: "smwm", core: true, type: "mc", q: "How does inverse dynamics regularization differ from SIGReg (LeWorldModel) as an anti-collapse mechanism?",
+  opts: ["SIGReg prescribes the geometry of the embedding distribution; inverse dynamics only requires keeping action-relevant information", "SIGReg requires action labels for every transition, while inverse dynamics regularization also works on action-free video", "SIGReg freezes a pretrained encoder to rule out collapse, while inverse dynamics trains the encoder end to end from pixels", "SIGReg is applied to the predictor's output embeddings, while inverse dynamics regularization is applied to raw pixel pairs"],
+  a: 0, why: "SIGReg 把嵌入推向各向同性高斯（分布先验）；SMWM 把表征锚在一个与任务相关的量（动作）上。需要动作标签的反而是 SMWM。", ref: "§1, §3" },
+{ p: "smwm", core: true, type: "mc", q: "In the dot-world 'Distractor' setup (one controlled dot plus one dot that moves randomly), the encoder ignores the random dot. Why is this the expected outcome of L = L_fwd + λ·L_inv?",
+  opts: ["Its state does not help recover the action and cannot be predicted from the past latent, so encoding it raises L_fwd without lowering L_inv", "Its pixels are masked out of the observation before encoding, in the same way that patches are dropped in masked autoencoding", "The latent space is too small to hold the positions of both dots, so the dot whose motion has lower variance is dropped first", "An invariance term pulls together embeddings of frames that differ only in the random dot, which removes it from the representation"],
+  a: 0, why: "干扰点与 a_t 独立，又随机演化。两个损失合起来的压力就是：只留可控的东西。", ref: "§4, Fig. 4" },
+{ p: "smwm", type: "mc", q: "Across the four dot-world configurations of Fig. 4, what does the number of significant principal components of the embeddings match?",
+  opts: ["The number of controllable degrees of freedom (4, 2, 2 and 6)", "The ambient latent dimension (64 in every configuration)", "The number of dots drawn in the image (2, 2, 2 and 5)", "The full state dimension including uncontrolled dots (4, 4, 4 and 10)"],
+  a: 0, why: "Independent 4、Coupled 2、Distractor 2、Combined 6，其余方向基本塌掉。谱不必均匀，重要的是秩。", ref: "§4, Fig. 4" },
+{ p: "smwm", core: true, type: "mc", q: "The forward loss encourages f(a(o)) ≈ g_a(f(o)). What does this condition say?",
+  opts: ["Encoding after acting in the world agrees with encoding first and then applying the latent transition: the two paths commute", "Applying the inverse model to two consecutive embeddings recovers the action that connects them, up to prediction error", "The embedding is unchanged by the action, so that f(a(o)) equals f(o) and the representation is invariant to control", "The forward model is an invertible map, so every latent state has exactly one predecessor under each possible action"],
+  a: 0, why: "这是等变（equivariance），不是不变（invariance）。Theorem 1：再加上动作构成半群 ⇒ a ↦ g_a 是同态，动作的复合 = 潜变换的复合。实际学到 g_a(z) ≈ z + ρ(a)。", ref: "§4, Eq. 5, Thm. 1, Fig. 3" },
+{ p: "smwm", type: "mc", q: "How does SMWM plan toward a goal image?",
+  opts: ["It rolls the forward model out over candidate action sequences and uses CEM inside an MPC loop to minimize the final latent distance to the goal embedding", "It trains a goal-conditioned policy with reinforcement learning on rollouts imagined by the forward model, then executes that policy in the environment", "It applies the inverse model to the current embedding and the goal embedding to read off the next action, and repeats after every environment step", "It decodes the predicted latents back to pixels and scores each candidate action sequence against the goal image with a perceptual distance"],
+  a: 0, why: "代价 C = ‖ẑ_{H+1} − z_g‖²；f 和 g 冻结，只优化动作序列。逆模型只当正则用（作者说将来可以把它放进规划器）。训练时没有解码器。", ref: "§5, Eq. 8" },
+{ p: "smwm", type: "mc", q: "Which summary of the planning results (Fig. 5) is correct?",
+  opts: ["SMWM roughly matches the SIGReg baseline on the three 2D tasks and clearly beats it on OGBench-Cube (84% vs. 59%)", "SMWM beats the SIGReg baseline by a wide margin on all four tasks, with the largest gap on the 2D TwoRoom task", "SMWM matches the SIGReg baseline on OGBench-Cube and falls clearly behind it on the three 2D tasks", "The forward-only ablation (λ = 0) matches SMWM in planning, so the regularizer matters only for interpretability"],
+  a: 0, why: "最大的优势出现在最复杂的环境（3D、接触丰富、5 维动作）。Forward-only 和随机动作都远差于两种正则方法。", ref: "§5, Fig. 5" },
+{ p: "smwm", type: "mc", q: "Reacher's state is two periodic joint angles. What structure do the SMWM embeddings show?",
+  opts: ["Four appreciable principal components, consistent with (cos θ1, sin θ1, cos θ2, sin θ2); 3D projections look like cylinders", "Two principal components that form a square grid over (θ1, θ2), just like the position grid recovered in the dot world", "One principal component per joint angle, with a visible jump in the embedding where each angle wraps from 2π back to 0", "An isotropic Gaussian cloud spread evenly over all 192 latent dimensions, with no visible relation to the joint angles"],
+  a: 0, why: "环面 T² 没法连续地嵌进 R²（θ = 0 ∼ 2π 处会断开），自然的表示是两个圆的乘积，升到 R⁴。笛卡尔自由度成直线方向，周期变量成圆。", ref: "§5, Fig. 6" },
+{ p: "smwm", type: "multi", q: "Select ALL statements that are true of SMWM.",
+  opts: ["It is trained from offline transitions (o_t, a_t, o_{t+1}) without rewards or task labels", "It stabilizes training with an EMA target encoder and a stop-gradient", "No loss term forces actions to act as translations in latent space; that structure emerges", "It reconstructs pixels with a decoder during training", "The inverse loss weight λ is its one extra hyperparameter, and it needs per-environment tuning", "Its encoder sees one frame at a time, so it cannot capture velocities"],
+  a: [0, 2, 4, 5], why: "没有 EMA、stop-gradient、冻结编码器，也没有重建（三角形 sprite 实验的解码器是事后训练的）。λ = 0.1 在 TwoRoom 最好，却让 Reacher 塌掉。", ref: "§3, §4, §6, App. A" },
+{ p: "smwm", core: true, type: "parts", q: "Complete the SMWM training diagram. At ① and ② say what each model outputs, at ③ choose gradient flow or stop-gradient.",
+  svg: "smwm",
+  parts: [
+    { label: "① forward model output", choices: ["the pixels of the next frame o_{t+1}", "ẑ_{t+1}, compared with the encoder's z_{t+1}", "â_t, compared with the executed action"], a: 1 },
+    { label: "② inverse model output", choices: ["ẑ_{t+1}, the predicted next embedding", "a reconstruction of o_{t+1}", "â_t, the action taken between the two frames"], a: 2 },
+    { label: "③ arrow z_{t+1} → forward loss", choices: ["gradient flows (no stop-gradient, no EMA)", "// stop-gradient"], a: 0 },
+    { label: "Which loss prevents collapse?", choices: ["the forward loss", "the inverse loss", "neither: the encoder is frozen"], a: 1 },
+    { label: "Write the total objective.", text: "L = L_fwd + λ·L_inv, both mean-squared errors; λ > 0 is the only extra hyperparameter." }
+  ],
+  why: "和 Quiz 1 的 DINO 图是同一种题，但答案相反：这里目标支路没有 //。防塌缩靠的是逆损失，不是不对称结构。", ref: "§3, Fig. 1, App. A.1" },
+{ p: "smwm", core: true, type: "sa", q: "Why does a JEPA-style latent world model collapse when trained with the forward prediction loss alone? How does the inverse dynamics loss prevent it?",
+  a: "The prediction and its target both come from the same encoder, so mapping every observation to one constant makes the forward loss zero. The inverse head must predict the action from (z_t, z_{t+1}); with constant embeddings it can only output the mean action, so lowering the inverse loss forces the embeddings to keep action-relevant information.",
+  why: "两句话：平凡解是什么；为什么逆损失在平凡解上降不下去。", ref: "§3" },
+{ p: "smwm", core: true, type: "sa", q: "What does an SMWM representation keep and what does it discard? Why?",
+  a: "It keeps the controllable degrees of freedom (what the agent's actions change) and discards uncontrollable distractors. A distractor is independent of the action, so it does not help the inverse loss, and it evolves unpredictably, so encoding it would only increase the forward loss.",
+  why: "这就是标题里的 perception for action：表征长什么样取决于智能体能做什么。", ref: "§4, Fig. 4" },
+{ p: "smwm", type: "sa", q: "In the dot world the forward model behaves like g_a(z) ≈ z + ρ(a). Why might the inverse loss favor this translation-like solution?",
+  a: "A simple way to make the action recoverable from (z_t, z_{t+1}) is to encode it in the displacement z_{t+1} − z_t ≈ ρ(a_t); if ρ is injective, the inverse head just inverts it. Nothing enforces additivity, but it is a low-complexity solution.",
+  why: "这是作者给的「可能的解释」，不是定理。", ref: "§4, Eq. 7" },
+{ p: "smwm", type: "sa", q: "State one limitation of using single-step inverse dynamics as the regularizer.",
+  a: "Any one: actions must be recoverable from two consecutive frames (fails when distinct actions cause the same visible change); a single-frame encoder cannot capture velocities; the action-aligned bias may discard information a downstream task needs; a biased behavior policy can create action-correlated but uncontrollable distractors that get encoded.",
+  why: "作者把「丢掉与动作无关的信息」称为 feature rather than a bug。", ref: "§6" },
+
+// ---------- Dreamer 4 ----------
+{ p: "dreamer4", core: true, type: "mc", q: "Given a corrupted latent, which quantity does the Dreamer 4 dynamics model directly predict?",
+  opts: ["The clean latent representation (x-prediction)", "The velocity pointing from noise to data (v-prediction)", "The noise that was mixed into the latent (ε-prediction)", "A discrete token index from the tokenizer's codebook"],
+  a: 0, why: "和 Quiz 2 的 JiT 那题同型。原版 shortcut model 是 v-prediction，Dreamer 4 改成 x-prediction。tokenizer 输出连续潜变量，没有 codebook。", ref: "§3.2, Eq. 6–7" },
+{ p: "dreamer4", core: true, type: "mc", q: "Why does Dreamer 4 prefer x-prediction over v-prediction for its dynamics model?",
+  opts: ["v-prediction yields high-frequency network outputs, and when frames are generated one by one the small errors accumulate", "x-prediction needs fewer network evaluations per generated frame than v-prediction does at the same visual quality", "v-prediction cannot be combined with a separate signal level for each time step, which diffusion forcing requires", "x-prediction makes the tokenizer unnecessary, because the dynamics model then predicts image patches directly"],
+  a: 0, why: "一次性联合生成整段时 v-prediction 很好；逐帧自回归时 x 空间的目标更有结构。表 2：完整模型 FVD 57，同架构换回 v 空间是 124。", ref: "§3.2, §4.4, Tab. 2" },
+{ p: "dreamer4", core: true, type: "mc", q: "Shortcut forcing combines which two ideas?",
+  opts: ["Diffusion forcing (a separate signal level per time step) and shortcut models (step-size conditioning with a bootstrap loss)", "Teacher forcing (clean history at every time step) and consistency distillation from a pretrained multi-step teacher model", "Diffusion forcing (a separate signal level per time step) and masked autoencoding of the tokenizer's latent tokens", "Full-sequence diffusion (one signal level for the whole clip) and classifier-free guidance on the action inputs"],
+  a: 0, why: "每个时间步自己的 signal level（来自 diffusion forcing）+ 以步长 d 为条件、4 步出一帧（来自 shortcut model）。MAE 是 tokenizer 的训练方式。", ref: "§2, §3.2" },
+{ p: "dreamer4", type: "mc", q: "In a shortcut model, how is the network trained for step sizes larger than the finest step d_min?",
+  opts: ["With a bootstrap loss whose target is the stop-gradient average of two consecutive half-size steps of the same network", "With the plain flow matching loss toward x_1 − x_0, exactly as for d_min, only evaluated on a coarser grid of signal levels", "By regressing onto samples produced by a separately trained multi-step teacher, as in standard progressive distillation", "With an adversarial loss in which a discriminator compares one-step samples against samples produced with many steps"],
+  a: 0, why: "v_target = sg(b′ + b″)/2。只有最细步长用 flow matching 损失。不需要预训练的 teacher，这点和 MeanFlow 一样。", ref: "§2, Eq. 3" },
+{ p: "dreamer4", core: true, type: "mc", q: "At inference, Dreamer 4 slightly corrupts the past frames it conditions on (τ_ctx = 0.1). Why?",
+  opts: ["To make the model robust to small imperfections in its own earlier generations", "To hide the action information that could otherwise be read off from past frames", "To match the tokenizer, which was trained with random patch dropout on its inputs", "To let all past frames be re-generated at every step together with the new frame"],
+  a: 0, why: "Diffusion Forcing 的做法：把自己生成的历史当作「轻微带噪」，模型就不会把有误差的帧当成完美真值。", ref: "§3.2" },
+{ p: "dreamer4", core: true, type: "mc", q: "Dreamer 4 inserts agent tokens that receive the task embedding. Which attention rule applies to them, and why?",
+  opts: ["Agent tokens attend to all modalities, but nothing attends back to them, so world-model predictions depend on actions and not on the task", "Agent tokens attend only to themselves and to the task embedding, so the policy cannot overfit to visual details of the current frame", "All modalities attend to the agent tokens, so the world model can use the task to predict futures that are relevant to the current goal", "Agent tokens attend only to past action tokens, so the reward head cannot peek at future frames and leak them into the policy"],
+  a: 0, why: "否则世界模型可能学到「任务是挖钻石 ⇒ 未来出现钻石」（causal confusion）。未来只能被动作直接影响。", ref: "§3.3" },
+{ p: "dreamer4", core: true, type: "mc", q: "Which parameters are updated during imagination training (phase 3)?",
+  opts: ["Only the policy and value heads; the transformer stays frozen", "The whole transformer, with the dynamics loss switched off", "Only the tokenizer decoder and the reward head", "The policy head and the dynamics model, jointly on imagined rollouts"],
+  a: 0, why: "脚注：微调整个 transformer 只带来少量额外收益，代价更高，而且得继续加动力学、策略先验、奖励损失来保住原有功能。价值头是这一阶段新初始化的。", ref: "§3.3" },
+{ p: "dreamer4", type: "mc", q: "What does the PMPO policy objective use from the advantages A_t = R^λ_t − v_t?",
+  opts: ["Only their sign: states are split into a positive and a negative set, and a likelihood loss is averaged over each set", "Their magnitude, after returns are normalized to a fixed percentile range so that all tasks have a comparable scale", "Their exponential, used as a per-state weight on a behavior cloning loss over the actions taken in imagination", "Their gradient with respect to the action, which is backpropagated through the world model into the policy head"],
+  a: 0, why: "只看符号 ⇒ 不用归一化 return 或 advantage，各任务等权。另加对冻结 BC 策略先验的 KL（β = 0.3）。", ref: "§3.3, Eq. 11" },
+{ p: "dreamer4", core: true, type: "mc", q: "How does Dreamer 4 train its dynamics model on videos that have no action labels?",
+  opts: ["The action input is replaced by a learned embedding, and the same dynamics loss is applied", "A latent action model first infers pseudo-actions from pairs of frames", "An inverse dynamics model trained on the labeled subset annotates them, as in VPT", "Unlabeled videos train only the tokenizer and are skipped by the dynamics model"],
+  a: 0, why: "没有动作时模型学一个更宽的结果分布，给了动作再收窄。2541 小时里只给 100 小时动作 → 85% PSNR、100% SSIM。Genie、LAPA 才是 latent action 路线。", ref: "§3.2, §4.3" },
+{ p: "dreamer4", type: "mc", q: "What does the action-generalization experiment with the Nether and End dimensions show?",
+  opts: ["Action conditioning learned only from Overworld actions transfers to dimensions seen only in unlabeled video (76% PSNR, 80% SSIM)", "Without Nether actions the model ignores actions in the Nether and scores the same there as the model trained with no actions", "The policy trained in imagination on Overworld tasks can also obtain diamonds in the Nether and End without any finetuning", "Adding unlabeled Nether and End videos to training lowers generation quality in the Overworld, a sign of limited model capacity"],
+  a: 0, why: "动作条件能泛化到只在无标签视频里见过的场景，这是「从网络视频学仿真器」的前提。", ref: "§4.3, Fig. 7" },
+{ p: "dreamer4", type: "mc", q: "What distinguishes Dreamer 4's result on the offline diamond challenge?",
+  opts: ["It is the first agent to obtain diamonds purely from offline data (0.7% of episodes), with about 100× less data than VPT", "It obtains diamonds in 29% of episodes after 1.4K hours of online interaction, without using any human demonstrations", "It matches VPT's diamond success rate while using abstract crafting actions instead of low-level mouse and keyboard", "It obtains diamonds from a dataset that contains neither action labels nor reward annotations, only gameplay video"],
+  a: 0, why: "29% 是铁镐。1.4K 小时在线交互、抽象合成动作是 Dreamer 3。Dreamer 4 用了 contractor 数据里的动作和事件标注（当稀疏奖励）。", ref: "§4.1, Fig. 3, Tab. 3" },
+{ p: "dreamer4", core: true, type: "mc", q: "Notation check. In Dreamer 4, x_τ = (1 − τ)·x_0 + τ·x_1 with x_0 pure noise. Which statement is right?",
+  opts: ["τ is a signal level: τ = 0 is pure noise and τ = 1 is clean data, so the ramp weight 0.9τ + 0.1 favors cleaner inputs", "τ is a noise level: τ = 0 is clean data and τ = 1 is pure noise, so the ramp weight 0.9τ + 0.1 favors noisier inputs", "τ is the position of a frame in the sequence, so the ramp weight 0.9τ + 0.1 puts more weight on later frames", "τ is the requested step size of the sampler, so the ramp weight 0.9τ + 0.1 puts more weight on larger steps"],
+  a: 0, why: "低 signal level 学习信号少：flow 项退化成预测数据集均值。和 Quiz 2 的 JiT / MeanFlow 一样容易看反；Mirror 的 VP 用的是相反约定（τ = 1 是噪声）。序列时间步是 t，步长是 d。", ref: "§2, Eq. 1, Eq. 8" },
+{ p: "dreamer4", type: "mc", q: "How is the Dreamer 4 tokenizer trained?",
+  opts: ["Masked autoencoding with MSE and LPIPS reconstruction losses; input patches are dropped with a probability drawn per image", "Vector quantization with a commitment loss and a discrete codebook, so that the dynamics model can predict token indices", "A KL-regularized VAE objective combined with an adversarial patch discriminator, as in standard latent diffusion models", "Joint-embedding prediction with an EMA target encoder and no pixel decoder, so that reconstruction is never required"],
+  a: 0, why: "连续潜变量，线性投影 + tanh 瓶颈；时间上因果，所以能逐帧解码。作者发现 MAE 训练改善了动力学模型生成视频的空间一致性。", ref: "§3.1, Eq. 5" },
+{ p: "dreamer4", type: "multi", q: "Select ALL statements that are true of Dreamer 4.",
+  opts: ["The policy is improved by reinforcement learning on rollouts generated inside the world model, with no environment interaction", "Each frame is generated with K = 4 sampling steps, which allows real-time inference on a single GPU", "The tokenizer produces discrete tokens from a learned codebook", "Temporal attention is used in every transformer layer to maximize temporal consistency", "Behavior cloning on the world model's representations outperforms finetuning a Gemma 3 VLA", "A reward head learned from the dataset's task annotations scores the imagined trajectories"],
+  a: [0, 1, 4, 5], why: "时间注意力每 4 层才一次：更快，质量也更好。tokenizer 是连续的。", ref: "§3, §4.1, §4.4" },
+{ p: "dreamer4", core: true, type: "parts", q: "For each training phase of Dreamer 4 (Algorithm 1), choose what is trained.",
+  parts: [
+    { label: "① Phase 1: world model pretraining", choices: ["policy and value heads, on imagined rollouts", "tokenizer (masked autoencoding), then dynamics (shortcut forcing) on videos and optional actions", "policy and reward heads on task tokens, while keeping the dynamics loss"], a: 1 },
+    { label: "② Phase 2: agent finetuning", choices: ["policy and value heads, on imagined rollouts", "tokenizer (masked autoencoding), then dynamics (shortcut forcing) on videos and optional actions", "policy and reward heads on task tokens, while keeping the dynamics loss"], a: 2 },
+    { label: "③ Phase 3: imagination training", choices: ["policy and value heads, on imagined rollouts", "tokenizer (masked autoencoding), then dynamics (shortcut forcing) on videos and optional actions", "policy and reward heads on task tokens, while keeping the dynamics loss"], a: 0 },
+    { label: "④ Policy objective in phase 3", choices: ["behavior cloning with multi-token prediction", "PMPO on the sign of the advantages, plus a KL to the frozen BC prior", "backpropagating predicted rewards through the dynamics"], a: 1 },
+    { label: "⑤ Value head target", choices: ["λ-returns computed from predicted rewards and values", "Monte Carlo returns of the dataset episodes", "the reward head's one-step prediction"], a: 0 }
+  ],
+  why: "阶段 2 的策略是行为克隆（MTP，L = 8）；阶段 3 才是 RL。价值头让策略能优化想象视野之外的回报。", ref: "§3, Alg. 1, §3.3" },
+{ p: "dreamer4", core: true, type: "parts", q: "Complete the shortcut forcing loss (Eq. 7).",
+  code: [["", "ẑ_1 = f_θ( z̃, τ, d, a )"], ["c", "            # the network predicts "], ["b", "①"], ["", "\n"], ["", "if d == d_min:\n"], ["", "    loss = ‖ ẑ_1 − z_1 ‖²"], ["c", "         # "], ["b", "②"], ["c", " loss\n"], ["", "else:\n"], ["c", "    # b′, b″: two half-size steps of the same network\n"], ["", "    loss = (1 − τ)² · ‖ (ẑ_1 − z̃)/(1 − τ) − "], ["b", "③"], ["", " ‖²\n"], ["", "loss = w(τ) · loss,   w(τ) = 0.9τ + 0.1"], ["c", "   # "], ["b", "④"]],
+  parts: [
+    { label: "① the network output is an estimate of", choices: ["the velocity z_1 − z_0", "the clean latent z_1", "the noise z_0"], a: 1 },
+    { label: "② the loss at the finest step size", choices: ["flow matching loss, written in x-space", "bootstrap loss", "LPIPS loss"], a: 0 },
+    { label: "③ the bootstrap target", choices: ["z_1 − z_0", "b′ − b″", "sg(b′ + b″)/2"], a: 2 },
+    { label: "④ What does the ramp weight do, and why?", text: "It weights the loss linearly in the signal level, so cleaner (high-signal) inputs count more. Near pure noise there is little learning signal, because the flow matching target degenerates toward the dataset mean." }
+  ],
+  why: "(ẑ_1 − z̃)/(1 − τ) 把 x 预测换成速度；(1 − τ)² 再把损失换回 x 空间的量级。", ref: "§3.2, Eq. 7–8" },
+{ p: "dreamer4", core: true, type: "sa", q: "Why can video world models accumulate errors in long autoregressive rollouts? Name two things Dreamer 4 does about it.",
+  a: "Each generated frame becomes context for the next, so small errors move the model away from the data it was trained on and build up. Dreamer 4 (1) predicts clean latents (x-prediction, x-space loss) instead of high-frequency velocities, and (2) trains with a separate noise level per frame and lightly noises its context at inference, so it tolerates imperfect history.",
+  why: "这道题就是 Quiz 2 第 9 题的续集。", ref: "§3.2, §4.4" },
+{ p: "dreamer4", core: true, type: "sa", q: "What is imagination training? Why does Dreamer 4 count as an offline method even though it runs on-policy reinforcement learning?",
+  a: "The policy is trained by reinforcement learning on rollouts generated by the world model: latents come from the dynamics, actions from the policy head, rewards and values from learned heads. The world model is learned from a fixed dataset and the agent never interacts with the real environment during learning.",
+  why: "离线很重要的原因：真实机器人上部署没训好的策略不安全，重置场景和实时给奖励也难。", ref: "§3.3, §4.1" },
+{ p: "dreamer4", core: true, type: "sa", q: "Why must other tokens be prevented from attending to the agent (task) tokens?",
+  a: "Otherwise the world model's predictions could depend on the task, for example predicting success because the task asks for it (causal confusion). With one-way attention, future predictions can be directly influenced only by actions, so the model stays a faithful simulator whatever the policy does.",
+  why: "agent token 能看所有模态；没有别的模态能回看它。", ref: "§3.3" },
+{ p: "dreamer4", type: "sa", q: "What does imagination training add on top of behavior cloning, according to the experiments?",
+  a: "Behavior cloning can only reproduce strategies in the dataset. RL inside the world model maximizes the learned reward, so the policy improves beyond the demonstrations: success rates rise most on the hardest milestones (iron pickaxe, diamonds) and the agent reaches milestones faster.",
+  why: "Fig. 4：WM+BC → Dreamer 4。即使不做想象训练，世界模型的表征也比 Gemma 3 更适合 BC。", ref: "§4.1, Fig. 3–4" },
+
+// ---------- FloWM ----------
+{ p: "flowm", core: true, type: "mc", q: "Informally, what does flow equivariance require of a sequence model?",
+  opts: ["If the input sequence is transformed by a time-parameterized flow, the output sequence transforms by the same flow", "If the input sequence is transformed by a time-parameterized flow, the output sequence stays exactly as it was", "The output at time t depends only on inputs up to time t, so the model can be rolled out one frame at a time", "The model outputs the optical flow between consecutive input frames and warps the previous output with it"],
+  a: 0, why: "第二个是不变性。式 (1)：Φ({ψ_t·f_t})_T = ψ_T·Φ({f_t})_T。普通等变是 ϕ(g·f) = g·ϕ(f)，流等变把固定的 g 换成随时间走的 ψ_t(ν)。", ref: "§3.1, Eq. 1" },
+{ p: "flowm", core: true, type: "mc", q: "Under partial observability, FloWM asks for equivariance to flows of the unobserved world state, not of the observations. What does this imply for the hidden state?",
+  opts: ["It must act as a structured memory map of the environment that transforms the same way whether an object is in view or not", "It only needs to encode the current observation, since out-of-view content can be re-generated when it comes back into view", "It must store all past frames in compressed form, so that attention can retrieve the relevant ones when the agent looks back", "It must be invariant to the agent's viewpoint, and therefore has to discard information about where objects are located"],
+  a: 0, why: "O(ψ_t·w_t) ≠ ψ_t·f_t：身后驶来的车暂时不改变你看到的画面，但几秒后会从你身边开过。", ref: "§3.1, Eq. 2" },
+{ p: "flowm", core: true, type: "mc", q: "What are FloWM's velocity channels?",
+  opts: ["Copies of the hidden state, each transported at every step by its own velocity ν, so content moving at that velocity stays aligned", "Extra input channels that hold the optical flow estimated between consecutive frames and are concatenated to the image", "Output heads that regress the velocity of every object in the scene and are supervised with an additional tracking loss", "Learned embeddings of the agent's action, one per possible action, that are concatenated to the hidden state at each step"],
+  a: 0, why: "隐状态定义在 V × G 上。MNIST World |V| = 25（速度 ±2），3D |V| = 5。读出时对通道 max-pool。它们负责外部物体的运动。", ref: "§3.1, Eq. 3, App. G.2, H.2" },
+{ p: "flowm", core: true, type: "mc", q: "How does FloWM achieve self-motion equivariance?",
+  opts: ["At each step it transforms the memory by the inverse of the known action, so the memory lives in the agent's co-moving frame", "It adds one extra velocity channel for every possible action of the agent and lets the decoder pick the matching channel", "It embeds the action as a token and lets self-attention learn how each action changes the scene, as video diffusion models do", "It estimates the agent's motion from optical flow between frames and subtracts it from the image before encoding"],
+  a: 0, why: "运动是相对的：自身运动等价于输入的整体运动。动作已知，所以不需要增加速度通道（式 7）。第三个是基线的做法；把动作拼进输入的消融（action-concat）也失败了。", ref: "§3.1, Eq. 7" },
+{ p: "flowm", type: "mc", q: "In the Simple Recurrent FloWM, h_{t+1}(ν) = ψ_1(ν − a_t) · σ(W ⋆ h_t(ν) + pad(U ⋆ f_t)). What does pad(·) model?",
+  opts: ["Partial observability: the encoded observation is written only into the field-of-view window of a hidden state larger than the view", "Boundary handling: the image is zero-padded so that convolutions at the edge of the field of view do not shrink the feature map", "Channel selection: velocity channels whose velocity does not match the observed motion are filled with zeros before the update", "Causality: future frames are masked out so that the recurrence at step t cannot access observations from later time steps"],
+  a: 0, why: "世界比视野大；窗口之外的隐状态绕着视野流动。读出：f̂_{t+1} = g_θ(max_ν window(h_{t+1}))。", ref: "§3.2, Eq. 8, Fig. 3" },
+{ p: "flowm", type: "mc", q: "In the Transformer-Based FloWM for 3D Block World, how is equivariance of the ViT encoder (first-person image → top-down map) obtained?",
+  opts: ["It is not built in: the encoder is treated as if equivariant, and the equivariant memory transform between steps encourages it to learn this", "By explicit depth unprojection of every pixel into a 3D voxel grid, which is then flattened along the vertical axis into a top-down map", "By group-convolution layers in the encoder that are exactly equivariant to the agent's translations and 90-degree rotations", "By an auxiliary loss that measures the equivariance error with a position probe and penalizes it during world-model training"],
+  a: 0, why: "探针测得等变误差训练前 6.96 → 训练后 0.22（DFoT 2.36）。作者认为这是优点：让强编码器自己学出满足等变的抽象，不必维护昂贵的 3D 隐状态。", ref: "§3.2, §4.3" },
+{ p: "flowm", core: true, type: "mc", q: "Why do sliding-window video diffusion models such as DFoT fail on these benchmarks?",
+  opts: ["Once frames leave the context window their information is gone, and nothing tracks how out-of-view objects keep moving", "Their VAE compresses frames so strongly that small objects such as digits or blocks cannot be reconstructed after decoding", "They are trained without action conditioning, so they cannot tell the agent's own motion apart from the motion of objects", "They use too few denoising steps per frame to render moving objects sharply, and the blur accumulates over the rollout"],
+  a: 0, why: "DFoT 有动作条件（CogVideoX 式）。作者的判断：瓶颈在预测一致的动力学，不在视觉复杂度。附录：DFoT 有时能单独应付部分可观测、物体运动、自身运动，但组合起来就不行。", ref: "§2, §4.2, Fig. 2" },
+{ p: "flowm", type: "mc", q: "Which matching of baselines to their characteristic failure on long rollouts is correct?",
+  opts: ["DFoT hallucinates plausible-looking objects; DFoT-SSM lets the digits fade to black; DreamerV3 RSSM blurs into an average of many blocks", "DFoT blurs into an average of many blocks; DFoT-SSM hallucinates plausible-looking objects; DreamerV3 RSSM lets them fade to black", "DFoT lets the digits fade to black; DFoT-SSM blurs into an average of many blocks; DreamerV3 RSSM hallucinates plausible-looking objects", "All three keep the objects sharp and at the right positions, but they gradually render them with the wrong colors and shapes"],
+  a: 0, why: "DFoT 在 MNIST World 上的 MSE 比全黑图还差（幻觉比什么都不画更糟）。SSM 的记忆会衰减。RSSM 没有结构化记忆。", ref: "§4.2, §4.3" },
+{ p: "flowm", type: "mc", q: "What do the ablations on MNIST World show?",
+  opts: ["Without velocity channels the rollout slowly diverges; without self-motion equivariance it fails outright, even if the action is concatenated as an input", "Without velocity channels the model fails outright; without self-motion equivariance it only diverges slowly, and concatenating the action fixes this", "Both ablations match the full model within the 20-frame training horizon and fall behind it only when rolled out to 150 frames", "Removing either component makes training converge in fewer steps, but long rollouts become unstable and eventually diverge"],
+  a: 0, why: "表 1（MSE，20 / 150 帧）：FloWM 0.0005 / 0.0018；no VC 0.0041 / 0.0334；no SME 约 0.12 / 0.13。no SME, no VC 就是普通卷积 RNN。两个先验都有时，收敛所需步数少几个数量级。", ref: "§4.2, Tab. 1, Fig. 5" },
+{ p: "flowm", type: "mc", q: "How is length generalization tested on MNIST World, and what is found?",
+  opts: ["Models trained to predict 20 frames are rolled out for 150; FloWM stays consistent with ground truth while the baselines diverge", "Models trained on 150 frames are evaluated on 20; FloWM is the only one that does not overfit", "Models are evaluated on larger canvases than in training; FloWM generalizes because convolutions are translation equivariant", "Models are rolled out with no context frames; FloWM can still generate a consistent world"],
+  a: 0, why: "3D Block World 同理：训练预测 90 帧，评测 70 和 210 帧。", ref: "§4.2, §4.3, Tab. 1–2" },
+{ p: "flowm", type: "mc", q: "A small probe is trained to decode block positions from each model's internal state. What is found?",
+  opts: ["FloWM's latent map supports about 96% accuracy; DFoT and DFoT-SSM are below 1%", "All models exceed 90% accuracy, so the difference lies only in their decoders", "DFoT is more accurate for visible blocks, and FloWM is more accurate for hidden ones", "FloWM reaches 96% for blocks in view, but drops below 1% for blocks out of view"],
+  a: 0, why: "FloWM 解码出的轨迹是直线（方块匀速），DFoT 的是锯齿状的不一致路径（Fig. 8）。", ref: "§4.3, Fig. 8" },
+{ p: "flowm", type: "mc", q: "In the 'find the red block' planning task, why do the baselines do poorly?",
+  opts: ["Their rollouts often hallucinate a red block, and the planner follows the actions that lead toward it", "Their rollouts are too slow for an exhaustive search over action sequences, so a random action is taken", "They need a learned reward model to score rollouts, and no such model was trained for this task", "They cannot be conditioned on the agent's actions during a rollout, so all candidates look the same"],
+  a: 0, why: "奖励 = 画面里的红色像素数，不需要额外训练。MPC 穷举，搜索深度 3，rollout 长 70。", ref: "§4.3, Fig. 7, Tab. 3" },
+{ p: "flowm", type: "multi", q: "Select ALL statements that are true of FloWM.",
+  opts: ["Its memory is a spatial map kept in the agent's reference frame and transformed by the inverse of each action", "Objects that leave the field of view keep moving inside the memory through the velocity channels", "It is a latent video diffusion model with a sliding attention window", "Models with both self-motion equivariance and velocity channels need orders of magnitude fewer training steps to converge", "Its experiments use real-world driving video with unknown camera motion", "Unlike DFoT, its training objective distinguishes observation frames from prediction frames"],
+  a: [0, 1, 3, 5], why: "FloWM 是递归模型，不是扩散模型。实验是受控的 2D / 3D 环境，动作参数化已知，这也是作者列出的局限。", ref: "§3, §4, §6" },
+{ p: "flowm", core: true, type: "parts", q: "Complete one step of the Simple Recurrent FloWM (Eq. 8).",
+  code: [["", "h_{t+1}(ν) = ψ_1( "], ["b", "①"], ["", " ) · σ( W ⋆ h_t(ν) + pad( U ⋆ f_t ) )\n"], ["", "f̂_{t+1}   = g_θ( "], ["b", "②"], ["", " over ν of window( h_{t+1} ) )\n"], ["c", "# U ⋆ f_t is written into "], ["b", "③"]],
+  parts: [
+    { label: "① combined flow applied to channel ν", choices: ["ν + a_t", "ν − a_t", "a_t only", "ν only"], a: 1 },
+    { label: "② read-out over the velocity channels", choices: ["mean", "concatenation", "pixel-wise max", "the ν = 0 channel only"], a: 2 },
+    { label: "③ which velocity channels receive the encoded observation", choices: ["every channel, identically (trivial lift)", "only the ν = 0 channel", "only the channel whose velocity matches the observed motion"], a: 0 },
+    { label: "Why is the flow ν − a_t and not just ν?", text: "Each channel flows with its own velocity ν to follow external motion. In addition the whole memory is shifted by the inverse of the agent's action, ψ_1(−a_t), because self-motion moves the scene the opposite way in the agent's frame. The two flows compose to ψ_1(ν − a_t)." }
+  ],
+  why: "实现上就是把每个通道的隐状态 roll (ν − a_t) 个像素。", ref: "§3.2, Eq. 8, App. H.2" },
+{ p: "flowm", core: true, type: "sa", q: "In a dynamic scene, why do existing video world models hallucinate after the agent turns away and back? How does FloWM avoid it?",
+  a: "Sliding-window models drop old frames, and view-dependent memories store what was seen, not where things are now, so the motion of out-of-view objects is lost. FloWM keeps a spatial memory map that is transformed with the agent's own motion and whose velocity channels keep moving the stored objects, so when the agent looks back the memory already holds their current positions.",
+  why: "对应 Fig. 1 和 Fig. 2 的四格图。", ref: "§1, §2, Fig. 1–2" },
+{ p: "flowm", core: true, type: "sa", q: "Which two sources of motion is FloWM equivariant to, and which mechanism handles each?",
+  a: "The agent's self-motion: handled by transforming the memory with the inverse of the known action (self-motion equivariance). Motion of external objects: handled by velocity channels, each flowing with its own velocity.",
+  why: "两种流合成 ψ_1(ν − a_t)。", ref: "§3.1, Eq. 7" },
+{ p: "flowm", core: true, type: "sa", q: "Why does equivariance to world flows force a 'memory map' rather than a representation of only the current view?",
+  a: "A world flow moves objects whether or not they are visible, so the observations themselves may not change. For the hidden state to transform in the same way in both cases, it must represent the full world state, including out-of-view regions, in a spatially structured way.",
+  why: "原文：the hidden state must transform equally whether an object is in view or not。", ref: "§3.1, Eq. 2" },
+{ p: "flowm", type: "sa", q: "Give one limitation of FloWM as evaluated in the paper.",
+  a: "Any one: it is tested only in controlled environments with rigid-body geometric actions and known action parameterizations; the set of velocities is discrete; it has not been scaled to realistic open-world data, which may need a stronger (diffusion) decoder and an adaptively sized latent map.",
+  why: "作者把这些都列为未来方向。", ref: "§6" },
+
+// ---------- Cross-paper ----------
+{ p: "cross", core: true, type: "mc", q: "Dreamer 4 and Mirror factorize an agent differently. Which statement is correct?",
+  opts: ["Dreamer 4 learns an action-conditioned world model plus a task-conditioned policy; Mirror learns an action-free video planner plus a task-agnostic video-to-action model", "Both learn an action-conditioned world model plus a task-conditioned policy; they differ only in whether the policy is trained by RL in imagination or by self-play", "Dreamer 4 learns an action-free video planner plus an inverse dynamics model; Mirror learns an action-conditioned world model plus a task-conditioned policy", "Both learn an action-free video planner plus a task-agnostic video-to-action model; they differ only in the video backbone and the amount of pretraining data"],
+  a: 0, why: "Mirror 的论点：WM 和 policy 都得从稀缺的带动作数据里学；VP 能从无动作的网络视频同时学程序性和物理知识。离线、有动作标签的同一设定下：钻石 5.5% 对 0.7%。", ref: "Mirror §3, Eq. 1 · Dreamer 4 §3" },
+{ p: "cross", core: true, type: "mc", q: "SMWM and Mirror both train a model that maps two consecutive observations to the action between them. How is it used?",
+  opts: ["In SMWM it is a regularizer that shapes the encoder and is not used for control; in Mirror it is the component that outputs the agent's actions", "In SMWM it outputs the agent's actions at test time; in Mirror it is only an auxiliary loss that regularizes the video planner's representation", "In both papers it labels unlabeled internet videos with pseudo-actions, which are then used to train a policy by behavior cloning", "In both papers it is trained once on expert demonstrations and then kept frozen while the rest of the system is trained"],
+  a: 0, why: "同一个工具（逆动力学），两种用途。SMWM 的标签来自离线数据；Mirror 的标签是自己执行的动作。共同弱点：动作必须在画面上留下痕迹。用 IDM 给网络视频打伪标签的是 VPT。", ref: "SMWM §3 · Mirror §3.1" },
+{ p: "cross", core: true, type: "mc", q: "Each paper has its own answer to drift in long rollouts. Which matching is correct?",
+  opts: ["Dreamer 4: x-prediction and lightly noised context. Mirror: re-planning from real observations. FloWM: a structured memory that tracks out-of-view dynamics", "Dreamer 4: re-planning from real observations. Mirror: x-prediction and lightly noised context. FloWM: a longer sliding attention window over past frames", "Dreamer 4: a structured memory that tracks out-of-view dynamics. Mirror: velocity channels. FloWM: x-prediction and lightly noised context", "Dreamer 4, Mirror and FloWM all re-encode a real observation at every step of a rollout, so prediction errors cannot accumulate in any of them"],
+  a: 0, why: "SMWM 的规划用 receding-horizon MPC：只执行前 K 个动作就重新编码、重规划。Dreamer 4 的想象训练和 FloWM 的预测都是真正的开环 rollout，拿不到真实观测。", ref: "Dreamer 4 §3.2 · Mirror §3 · FloWM §3" },
+{ p: "cross", core: true, type: "mc", q: "SMWM and FloWM both tie actions to transformations of a latent state. What is the key difference?",
+  opts: ["In FloWM the action's transformation of the memory is built into the architecture; in SMWM an approximately equivariant, translation-like structure emerges from the losses", "In SMWM the action's transformation of the latent is hard-coded as a shift; in FloWM an approximately equivariant structure is learned by an inverse dynamics head", "Both hard-code the transformation in the architecture; SMWM uses rotations of the latent vector and FloWM uses translations of a spatial memory map", "Neither paper uses recorded actions; both infer latent actions from pairs of video frames and apply them to the latent state as learned transformations"],
+  a: 0, why: "SMWM：f(a(o)) ≈ g_a(f(o)) 由前向损失鼓励，g_a(z) ≈ z + ρ(a) 是涌现的。FloWM：T_a^{-1} 是已知的群表示，直接作用在记忆上（3D 版的编码器等变性才是学出来的）。", ref: "SMWM §4 · FloWM §3.1" },
+{ p: "cross", core: true, type: "mc", q: "Which statement about action labels is correct?",
+  opts: ["SMWM needs an action for every transition; Dreamer 4 needs actions for only part of its video; self-improving Mirror needs no expert actions but must interact with the environment", "SMWM and Dreamer 4 are both trained on action-free video only; Mirror is the one that needs expert action labels, because its V2A model is trained by supervised learning", "All three need expert action labels for every frame of their training video; they differ only in whether rewards are also required for training the policy", "Mirror and SMWM both learn from a fixed offline dataset without any interaction; Dreamer 4 is the one that needs online interaction to train its policy"],
+  a: 0, why: "Dreamer 4 的世界模型 100 / 2541 小时动作就学到大部分动作条件，但训练策略仍要动作和奖励标注。Mirror 的代价是在线交互（BASALT 5 小时，钻石任务 140 小时）。", ref: "SMWM §3 · Dreamer 4 §4.3 · Mirror §4.1" },
+{ p: "cross", core: true, type: "sa", q: "Compare how Dreamer 4 and Mirror each get a policy that goes beyond plain behavior cloning. What does each require?",
+  a: "Dreamer 4 trains the policy by reinforcement learning inside a learned, action-conditioned world model; it needs action labels and reward annotations in an offline dataset, but no environment interaction. Mirror keeps the knowledge of what to do in a video planner trained on action-free video and learns only a video-to-action model by self-play; it needs environment interaction, but no action labels or rewards.",
+  why: "一个离线但要标注，一个在线但不要标注。", ref: "Dreamer 4 §3.3 · Mirror §3" },
+{ p: "cross", core: true, type: "sa", q: "SMWM and FloWM both argue that a world model's latent state should have structure tied to action. State each paper's version in one sentence.",
+  a: "SMWM: the latent should keep exactly what the agent can control, which an inverse dynamics loss induces, and actions then act as simple translation-like moves in latent space. FloWM: the latent should be a spatial memory that transforms equivariantly with self-motion and object motion, so unobserved parts of the world stay correctly aligned over time.",
+  why: "SMWM 回答「留下什么」，FloWM 回答「怎么随时间保持对齐」。", ref: "SMWM §4, §6 · FloWM §3, §6" }
+];
+
+const ORDER = ["mirror", "smwm", "dreamer4", "flowm", "cross"];
+const PAPERS = ORDER.map(k => PAPERS_ALL[k]);
+const QS = ORDER.flatMap(k => QS_ALL.filter(q => q.p === k));
+// Deterministic option shuffle for single-choice questions: correct letters balanced across A-D, stable across reloads.
+(function () {
+  const hash = s => { let x = 2166136261; for (const ch of s) { x ^= ch.charCodeAt(0); x = Math.imul(x, 16777619); } return x >>> 0; };
+  const mcs = QS.filter(q => q.type === "mc" && !q.fixed).sort((a, b) => hash(a.q) - hash(b.q));
+  mcs.forEach((q, rank) => {
+    let s = hash(q.q + "#");
+    const rnd = () => { s = (s + 0x6D2B79F5) >>> 0; let t = s; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+    const others = q.opts.filter((_, i) => i !== q.a);
+    for (let i = others.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [others[i], others[j]] = [others[j], others[i]]; }
+    const target = rank % q.opts.length, right = q.opts[q.a];
+    others.splice(target, 0, right);
+    q.opts = others; q.a = target;
+  });
+})();
+const FOOT = "Built from the papers' full text: Mirror arXiv 2610.24177 · SMWM arXiv 2606.20104 (v1) · Dreamer 4 arXiv 2509.24527 (v1) · FloWM arXiv 2601.01075 (v3, ICML 2026). Section references (§) point to where each answer appears. Your progress is saved in this browser only.";
+</script>
+<script>
+(function () {
+  const KEY = "cs2883r-quiz3-v1";
+  let state = { mc: {}, multi: {}, parts: {}, sa: {}, draft: {} };
+  try { const s = JSON.parse(localStorage.getItem(KEY) || "null"); if (s) state = Object.assign(state, s); } catch (e) {}
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} };
+
+  QS.forEach((q, i) => { q.id = q.p + "-" + i; });
+  const byId = Object.fromEntries(PAPERS.map(p => [p.id, p]));
+  let filter = "all", mock = null, sheetOpen = false, timerEnd = 0, timerId = null;
+
+  const el = (tag, attrs = {}, ...kids) => {
+    const n = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs)) {
+      if (k === "class") n.className = v; else if (k === "text") n.textContent = v;
+      else if (k.startsWith("on")) n.addEventListener(k.slice(2), v); else n.setAttribute(k, v);
+    }
+    kids.flat().forEach(c => c != null && n.append(c));
+    return n;
+  };
+  const LET = "ABCDEFGH";
+  const sameSet = (a, b) => a.length === b.length && a.every(x => b.includes(x));
+  const hasText = q => q.type === "parts" && q.parts.some(p => p.text);
+  const isAuto = q => q.type === "mc" || q.type === "multi" || (q.type === "parts" && !hasText(q));
+  const typeLabel = q => q.type === "mc" ? "Multiple choice" : q.type === "multi" ? "Select all" : q.type === "sa" ? "Short answer" : (q.svg || q.code) ? "Diagram / fill in" : "Fill in each part";
+  function autoState(q) {
+    if (q.type === "mc") { const d = q.id in state.mc; return { done: d, right: d && state.mc[q.id] === q.a }; }
+    if (q.type === "multi") { const s = state.multi[q.id]; const d = !!(s && s.checked); return { done: d, right: d && sameSet(s.sel, q.a) }; }
+    const s = state.parts[q.id]; const d = !!(s && s.checked);
+    return { done: d, right: d && q.parts.every((p, i) => String(s.vals[i]) === String(p.a)) };
+  }
+
+  document.getElementById("lede").textContent =
+    `${QS.length} questions on the four Quiz 3 papers plus cross-paper links, in the formats Quiz 1 and Quiz 2 used: multiple choice, select-all, fill-in parts, diagram completion and 1–2 sentence short answers. The mock quiz draws 10 core-idea questions and starts a 10-minute timer. Auto-graded items check themselves; for short answers, write your answer, reveal the reference and mark yourself.`;
+
+  function visible() {
+    if (mock) return mock.map(id => QS.find(q => q.id === id));
+    return QS.filter(q => filter === "all" || q.p === filter);
+  }
+
+  function renderFilters() {
+    const f = document.getElementById("filters"); f.replaceChildren();
+    const mk = (id, label, n) => el("button", { class: "chip", type: "button", "aria-pressed": String(!mock && filter === id),
+      onclick: () => { filter = id; mock = null; render(); } }, label, el("span", { class: "n", text: String(n) }));
+    f.append(mk("all", "All", QS.length));
+    PAPERS.forEach(p => f.append(mk(p.id, p.short, QS.filter(q => q.p === p.id).length)));
+    if (mock) f.append(el("button", { class: "chip", type: "button", "aria-pressed": "true", onclick: () => { mock = null; render(); } }, "Mock quiz ✕"));
+  }
+
+  function renderScore() {
+    const vs = visible();
+    const autos = vs.filter(isAuto), selfs = vs.filter(q => !isAuto(q));
+    const ad = autos.map(autoState), aDone = ad.filter(s => s.done).length, aRight = ad.filter(s => s.right).length;
+    const sDone = selfs.filter(q => state.sa[q.id] === "got" || state.sa[q.id] === "miss"), sGot = sDone.filter(q => state.sa[q.id] === "got");
+    document.getElementById("score").replaceChildren(
+      el("span", {}, "Auto ", el("b", { text: `${aRight}/${aDone}` }), ` · ${autos.length} total`),
+      el("span", {}, "Self-marked ", el("b", { text: `${sGot.length}/${sDone.length}` }), ` · ${selfs.length} total`));
+  }
+
+  function renderSheets() {
+    const box = document.getElementById("sheets"); box.hidden = !sheetOpen; box.replaceChildren();
+    document.getElementById("btnSheet").textContent = sheetOpen ? "Hide cheat sheet" : "Show cheat sheet";
+    if (!sheetOpen) return;
+    const ps = filter === "all" || mock ? PAPERS : [byId[filter]];
+    ps.forEach(p => box.append(el("section", { class: "sheet" },
+      el("h2", { text: p.name }), el("div", { class: "meta", text: p.meta }),
+      el("p", { class: "gist", text: p.gist }), el("ul", {}, p.facts.map(t => el("li", { text: t }))))));
+  }
+
+  function answerBlock(q, model) {
+    return el("div", { class: "ans" },
+      model ? el("div", { class: "model", text: model }) : null,
+      q.why ? el("div", { class: "why", text: q.why }) : null,
+      q.ref ? el("div", { class: "ref", text: q.ref }) : null);
+  }
+  function selfMark(q) {
+    const mark = v => () => { state.sa[q.id] = v; save(); rerenderCard(q); renderScore(); };
+    return el("div", { class: "self" }, "How did you do?",
+      el("button", { class: "btn", type: "button", "aria-pressed": String(state.sa[q.id] === "got"), onclick: mark("got") }, "Got it"),
+      el("button", { class: "btn", type: "button", "aria-pressed": String(state.sa[q.id] === "miss"), onclick: mark("miss") }, "Missed it"));
+  }
+  function figure(q) {
+    if (q.svg) { const d = el("div", { class: "fig" }); d.innerHTML = DG[q.svg](); return d; }
+    if (q.code) return el("pre", { class: "code" }, q.code.map(([cls, t]) => cls ? el("span", { class: cls, text: t }) : document.createTextNode(t)));
+    return null;
+  }
+
+  function cardMC(q, c) {
+    const picked = state.mc[q.id], done = picked !== undefined;
+    c.append(el("div", { class: "opts" }, q.opts.map((o, i) => {
+      const cls = "opt" + (done && i === q.a ? " right" : "") + (done && i === picked && picked !== q.a ? " wrong" : "");
+      const b = el("button", { class: cls, type: "button", onclick: () => { state.mc[q.id] = i; save(); rerenderCard(q); renderScore(); } },
+        el("span", { class: "k", text: LET[i] }), el("span", { text: o }));
+      if (done) b.disabled = true;
+      return b;
+    })));
+    if (done) {
+      c.append(el("div", { class: "verdict " + (picked === q.a ? "good" : "bad"), text: picked === q.a ? "Correct" : `Not quite: the answer is ${LET[q.a]}` }));
+      c.append(answerBlock(q));
+    }
+  }
+
+  function cardMulti(q, c) {
+    const s = state.multi[q.id] || { sel: [], checked: false };
+    c.append(el("p", { class: "hint", text: "Select every statement that is true, then check." }));
+    c.append(el("div", { class: "opts" }, q.opts.map((o, i) => {
+      const on = s.sel.includes(i), good = q.a.includes(i);
+      let cls = "opt";
+      if (!s.checked) cls += on ? " sel" : "";
+      else cls += on && good ? " right" : on && !good ? " wrong" : !on && good ? " missed" : "";
+      const b = el("button", { class: cls, type: "button", "aria-pressed": String(on), onclick: () => {
+        const cur = state.multi[q.id] || { sel: [], checked: false };
+        cur.sel = cur.sel.includes(i) ? cur.sel.filter(x => x !== i) : cur.sel.concat(i);
+        state.multi[q.id] = cur; save(); rerenderCard(q);
+      } }, el("span", { class: "k", text: on ? "☑" : "☐" }), el("span", { text: o }));
+      if (s.checked) b.disabled = true;
+      return b;
+    })));
+    if (!s.checked) {
+      c.append(el("div", { class: "row" }, el("button", { class: "btn primary", type: "button", onclick: () => {
+        const cur = state.multi[q.id] || { sel: [], checked: false }; cur.checked = true; state.multi[q.id] = cur; save(); rerenderCard(q); renderScore();
+      } }, "Check")));
+    } else {
+      const right = sameSet(s.sel, q.a);
+      c.append(el("div", { class: "verdict " + (right ? "good" : "bad"), text: right ? "Correct" : `Not quite: the answer is ${q.a.map(i => LET[i]).join(", ")} (dashed = true but not selected)` }));
+      c.append(answerBlock(q));
+    }
+  }
+
+  function cardParts(q, c) {
+    const s = state.parts[q.id] || { vals: {}, checked: false };
+    const fig = figure(q); if (fig) c.append(fig);
+    const rows = q.parts.map((p, i) => {
+      const val = s.vals[i];
+      let ctrl;
+      if (p.choices) {
+        ctrl = el("select", { id: `pt-${q.id}-${i}`, "aria-label": p.label },
+          el("option", { value: "", text: "Choose…" }),
+          p.choices.map((ch, j) => { const o = el("option", { value: String(j), text: ch }); if (String(val) === String(j)) o.selected = true; return o; }));
+        if (s.checked) { ctrl.disabled = true; ctrl.className = String(val) === String(p.a) ? "ok" : "no"; }
+      } else {
+        ctrl = el("input", { id: `pt-${q.id}-${i}`, type: "text", placeholder: "Your answer…", "aria-label": p.label, autocomplete: "off" });
+        ctrl.value = val || "";
+        if (s.checked) ctrl.readOnly = true;
+      }
+      ctrl.addEventListener(p.choices ? "change" : "input", () => {
+        const cur = state.parts[q.id] || { vals: {}, checked: false }; cur.vals[i] = ctrl.value; state.parts[q.id] = cur; save();
+      });
+      const m = p.label.match(/^([①②③④⑤⑥]|\([a-z]\))\s*(.*)$/);
+      const lab = m ? el("span", { class: "pl" }, el("span", { class: "num", text: m[1] }), m[2]) : el("span", { class: "pl", text: p.label });
+      const row = el("div", { class: "part" }, el("label", { for: `pt-${q.id}-${i}` }, lab), ctrl);
+      if (s.checked) {
+        if (p.choices) {
+          const ok = String(val) === String(p.a);
+          row.append(el("div", { class: "res " + (ok ? "good" : "bad") }, el("b", { text: ok ? "✓ " : "✗ " }), ok ? "" : "Answer: ", ok ? "" : p.choices[p.a]));
+        } else {
+          row.append(el("div", { class: "res" }, el("b", { text: "Reference: " }), p.text));
+        }
+      }
+      return row;
+    });
+    c.append(el("div", { class: "parts" }, rows));
+    if (!s.checked) {
+      c.append(el("div", { class: "row" }, el("button", { class: "btn primary", type: "button", onclick: () => {
+        const cur = state.parts[q.id] || { vals: {}, checked: false };
+        q.parts.forEach((p, i) => { const e = document.getElementById(`pt-${q.id}-${i}`); if (e) cur.vals[i] = e.value; });
+        cur.checked = true; state.parts[q.id] = cur;
+        if (hasText(q) && !(q.id in state.sa)) state.sa[q.id] = null;
+        save(); rerenderCard(q); renderScore();
+      } }, hasText(q) ? "Check and show answers" : "Check")));
+    } else {
+      if (!hasText(q)) {
+        const right = autoState(q).right;
+        c.append(el("div", { class: "verdict " + (right ? "good" : "bad"), text: right ? "All parts correct" : "Some parts are wrong: see the answers above" }));
+      }
+      c.append(answerBlock(q));
+      if (hasText(q)) c.append(selfMark(q));
+    }
+  }
+
+  function cardSA(q, c) {
+    const ta = el("textarea", { id: "ta-" + q.id, placeholder: "Your 1–2 sentence answer…", "aria-label": "Your answer" });
+    ta.value = state.draft[q.id] || "";
+    ta.addEventListener("input", () => { state.draft[q.id] = ta.value; save(); });
+    c.append(ta);
+    if (!(q.id in state.sa)) {
+      c.append(el("div", { class: "row" }, el("button", { class: "btn primary", type: "button", onclick: () => { state.sa[q.id] = null; save(); rerenderCard(q); } }, "Show reference answer")));
+    } else {
+      c.append(answerBlock(q, q.a));
+      c.append(selfMark(q));
+    }
+  }
+
+  function card(q, idx) {
+    const p = byId[q.p];
+    const c = el("article", { class: "card", id: q.id },
+      el("div", { class: "tags" }, el("span", { text: String(idx + 1).padStart(2, "0") }),
+        el("span", { class: "tag", text: p.short }), el("span", { class: "tag type", text: typeLabel(q) }), q.core ? el("span", { class: "tag", text: "Core idea" }) : null),
+      el("p", { class: "q", text: q.q }));
+    if (q.type === "mc") cardMC(q, c);
+    else if (q.type === "multi") cardMulti(q, c);
+    else if (q.type === "parts") cardParts(q, c);
+    else cardSA(q, c);
+    return c;
+  }
+
+  function rerenderCard(q) {
+    const old = document.getElementById(q.id);
+    const idx = visible().findIndex(x => x.id === q.id);
+    if (old) old.replaceWith(card(q, idx));
+  }
+
+  function tick() {
+    const t = document.getElementById("timer");
+    if (!mock) { t.hidden = true; if (timerId) { clearInterval(timerId); timerId = null; } return; }
+    const left = Math.max(0, Math.round((timerEnd - Date.now()) / 1000));
+    t.hidden = false;
+    t.textContent = left > 0 ? `Time left ${Math.floor(left / 60)}:${String(left % 60).padStart(2, "0")}` : "Time is up";
+    t.className = "timer" + (left === 0 ? " over" : left <= 60 ? " low" : "");
+    if (left === 0 && timerId) { clearInterval(timerId); timerId = null; }
+  }
+
+  function render() {
+    renderFilters(); renderScore(); renderSheets(); tick();
+    const list = document.getElementById("list"); list.replaceChildren();
+    const vs = visible();
+    if (!vs.length) list.append(el("p", { class: "empty", text: "No questions here." }));
+    vs.forEach((q, i) => list.append(card(q, i)));
+  }
+
+  function clearQ(id) { delete state.mc[id]; delete state.multi[id]; delete state.parts[id]; delete state.sa[id]; delete state.draft[id]; }
+  const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+
+  document.getElementById("btnSheet").addEventListener("click", () => { sheetOpen = !sheetOpen; renderSheets(); });
+  document.getElementById("btnMock").addEventListener("click", () => {
+    // Quiz-shaped: per paper one auto-graded and one written core-idea item, then two cross-paper items. 10 questions, 10 minutes.
+    const ids = [];
+    ["mirror", "smwm", "dreamer4", "flowm", "cross"].forEach(k => {
+      const qs = QS.filter(q => q.p === k && q.core);
+      ids.push(pick(qs.filter(isAuto)).id, pick(qs.filter(q => !isAuto(q))).id);
+    });
+    mock = ids; ids.forEach(clearQ);
+    timerEnd = Date.now() + 10 * 60 * 1000;
+    if (timerId) clearInterval(timerId);
+    timerId = setInterval(tick, 1000);
+    save(); render(); window.scrollTo({ top: 0 });
+  });
+  document.getElementById("btnReset").addEventListener("click", () => { visible().forEach(q => clearQ(q.id)); save(); render(); });
+  document.getElementById("foot").textContent = FOOT;
+  render();
+})();
+</script>

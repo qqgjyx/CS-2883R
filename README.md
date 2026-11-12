@@ -9,6 +9,7 @@ office hours Wed 5:45-6:45pm, SEC 1.412
 | --- | --- |
 | Canvas | <https://canvas.harvard.edu/courses/176874> |
 | Syllabus | [`doc/syllabus.md`](doc/syllabus.md) |
+| Quiz 3 drill | [`doc/quiz3_practice.html`](doc/quiz3_practice.html), shared by a classmate; open in a browser |
 | Roles + upload rules | [`doc/guidelines.md`](doc/guidelines.md) |
 | Sign-up / role sheet | _TODO: paste the Google Sheets link_ |
 | Shared upload folder | <https://drive.google.com/drive/folders/1i9ubGc51_2Kosz_I2ZViswT9NLtF8H1O> |
@@ -19,8 +20,8 @@ Grading: presentation 30% / participation 30% / quizzes 10% / final project 30%.
 
 ## Final project
 
-Proposal source: [`2026-10-30_final-project/main.tex`](2026-10-30_final-project/main.tex).
-Build inside that folder with `latexmk -pdf main.tex`.
+Proposal (final, handed in): [`2026-10-30_PRO/main.pdf`](2026-10-30_PRO/main.pdf). The folder is a
+read-only copy of the final Overleaf version, which Ciro maintains; it is not edited here.
 Proposal due October 30 at 11:59 p.m.; presentation December 2;
 final report due December 4 at 11:59 p.m. (2026, Eastern time).
 
@@ -134,12 +135,10 @@ doc/                      course documents
   meanflow.ipynb          the whole demo; caches weights/ and figs/
   meanflow.py, models/    adapted from haidog-yaqub/MeanFlow (LICENSE-haidog)
   MeanFlow-Hacker/        the upload folder
-2026-10-30_final-project/
-  main.tex, ref.bib       the proposal (ACM); build with latexmk -pdf
+2026-10-30_PRO/         copy of the final proposal from Ciro's Overleaf; not edited here
+  main.tex, ref.bib      the proposal (ACM); build with latexmk -pdf
   main.pdf               the compiled two-page proposal
-  math_commands.tex      shared notation
-  images/                adapted TikZ schematic
-  drafts/                preserved teammate first draft
+  01_sampling_hypothesis.tex, math_commands.tex   TikZ figure, notation
 2026-11-18_PRE/         submodule: qqgjyx/overleaf_CS-2883R-pre (private), synced with Overleaf
   main.tex, refs.bib     the slides (Beamer, moloch); build with latexmk -pdf
   figs/                  the authors' figures from the arXiv source, named by figure number
