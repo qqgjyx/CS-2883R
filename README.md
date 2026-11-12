@@ -30,22 +30,27 @@ final report due December 4 at 11:59 p.m. (2026, Eastern time).
 | --- | --- | --- | --- |
 | **Wed 2026-09-16** | [RayZer](https://arxiv.org/abs/2505.00702) (arXiv 2505.00702) | 🤖 **AI Interrogator** | done, [`2026-09-16_rayzer/`](2026-09-16_rayzer/) |
 | **Wed 2026-10-14** | [MeanFlow](https://arxiv.org/abs/2505.13447) (arXiv 2505.13447) | 👾 **Hacker** | prep in [`2026-10-14_meanflow/`](2026-10-14_meanflow/) |
-| **Wed 2026-11-18** | [LAPA](https://arxiv.org/abs/2410.11758) (arXiv 2410.11758) | 🧑‍🏫 **Presenter**, with Vivian Hui | draft in [`2026-11-18_lapa/`](2026-11-18_lapa/) |
+| **Wed 2026-11-18** | [PointWorld](https://arxiv.org/abs/2601.03782) (arXiv 2601.03782) | 🧑‍🏫 **Presenter**, with Vivian Hui | draft in [`2026-11-18_pre/`](2026-11-18_pre/); switched from LAPA on 10 Nov |
 
-### Wed 18 Nov, 3:45pm: LAPA Presenter, with Vivian Hui
+### Wed 18 Nov, 3:45pm: PointWorld Presenter, with Vivian Hui
 
-Vivian picked the paper. We share the 15-minute talk, then lead the discussion and call on the
-roles. Slides `main.tex`: 15 main frames plus 6 backups, the authors' own figures and tables,
-every number checked against the paper, a timing budget per frame (about 14:15 of 15:00) and a
-marked handoff after the method. Conventions are written as rules in the file header. Only the
-roles' call order is still open. Build inside the folder with `latexmk -pdf main.tex`.
-The folder is a submodule synced with Overleaf: clone with `--recurse-submodules`, and after
-Overleaf edits run `git submodule update --remote 2026-11-18_lapa` and commit the bump.
-The paper is [`doc/12_LAPA_2410.11758.pdf`](doc/12_LAPA_2410.11758.pdf).
+Qianqian asked us on 10 Nov to present
+[PointWorld](https://point-world.github.io) (Huang et al., CVPR 2026) instead of LAPA, and Vivian
+agreed. Same format: a shared 15-minute talk, then we lead the discussion and call on the roles.
+The paper is [`doc/13_PointWorld_2601.03782.pdf`](doc/13_PointWorld_2601.03782.pdf).
 
-- [ ] Meet Vivian Mon 9 Nov, 2pm (Zoom or call). Agenda: split by paper sections (her
-  proposal), whose deck is the base (she has shared slides), paper confirmed with Qianqian
-- [ ] Split the talk with Vivian; the draft marks a handoff after the method
+Slides `main.tex`: 16 main frames plus 8 backups, the authors' own figures and tables, every
+number checked against the paper, a timing budget per frame (about 13:45 of 15:00) and a marked
+handoff after planning. Spoken as the first author, per the guidelines; our critique sits in the
+Discussion questions and the "Our reading" backup, for the reviewer and red-team roles. Build inside the folder with `latexmk -pdf main.tex`. The folder is a
+submodule synced with Overleaf: clone with `--recurse-submodules`, and after Overleaf edits run
+`git submodule update --remote 2026-11-18_pre` and commit the bump. The finished LAPA deck is the
+tag `lapa-final` in the same repo ([`doc/12_LAPA_2410.11758.pdf`](doc/12_LAPA_2410.11758.pdf) is
+its paper).
+
+- [x] Read PointWorld, numbers checked against the PDF
+- [x] Slides: the authors' own figures and tables, a timing budget per frame
+- [ ] Split the talk with Vivian; the draft marks a handoff after planning
 - [ ] Make the slides ours: rewrite and cut where needed
 - [ ] Roles and call order from the Ed post, out about a week and a half before class
 - [ ] Rehearse the 15 minutes together
@@ -104,7 +109,7 @@ Left:
 - **Quizzes** — three to four across the semester, unannounced.
 - **Final project** — coding project, in-class presentation, written report. The last class is
   reserved for presentations. See the final-project dates above.
-- **Presenter**: 18 Nov, LAPA, with Vivian Hui. See above.
+- **Presenter**: 18 Nov, PointWorld (switched from LAPA), with Vivian Hui. See above.
 
 ## Repo layout
 
@@ -131,7 +136,7 @@ doc/                      course documents
   math_commands.tex      shared notation
   images/                adapted TikZ schematic
   drafts/                preserved teammate first draft
-2026-11-18_lapa/        submodule: qqgjyx/overleaf_CS-2883R_lapa, synced with Overleaf
+2026-11-18_pre/         submodule: qqgjyx/overleaf_CS-2883R_pre, synced with Overleaf
   main.tex, refs.bib     the slides (Beamer, moloch); build with latexmk -pdf
   figs/                  the authors' figures from the arXiv source, named by figure number
 ```
