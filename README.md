@@ -25,6 +25,11 @@ read-only copy of the final Overleaf version, which Ciro maintains; it is not ed
 Proposal due October 30 at 11:59 p.m.; presentation December 2;
 final report due December 4 at 11:59 p.m. (2026, Eastern time).
 
+Project workspace: [`2026-12-04_PRO/`](2026-12-04_PRO/), a submodule of the private repo
+[qqgjyx/CS-2883R-pro](https://github.com/qqgjyx/CS-2883R-pro), which is the source of truth for
+the project's code. Clone with `--recurse-submodules`; after work there, run
+`git submodule update --remote 2026-12-04_PRO` and commit the bump.
+
 ## My assignments
 
 | Date | Paper | My role | Status |
@@ -142,6 +147,7 @@ doc/                      course documents
 2026-11-18_PRE/         submodule: qqgjyx/overleaf_CS-2883R-pre (private), synced with Overleaf
   main.tex, refs.bib     the slides (Beamer, moloch); build with latexmk -pdf
   figs/                  the authors' figures from the arXiv source, named by figure number
+2026-12-04_PRO/         submodule: qqgjyx/CS-2883R-pro (private), the project workspace
 ```
 
 The deck is **one HTML file** published as an Artifact and updated in place at the same URL.
