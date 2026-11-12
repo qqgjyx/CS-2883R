@@ -159,7 +159,7 @@
 % 5. Training loss  1:00  (Eq. 1, S3.1, Fig. 4; 1-5% from S5.1; full form in backup)
 \begin{frame}{Training loss}
   \centering
-  \paperfig{width=0.86\linewidth, trim=0 0 0 129, clip}{figs/fig4_weighting.pdf}{Fig.~4, bottom row}
+  \paperfig{width=0.95\linewidth, trim=0 0 0 129, clip}{figs/fig4_weighting.pdf}{Fig.~4, bottom row}
   \vspace{2pt}
   {\small $\displaystyle \mathcal L = \tfrac12 \sum_{k,i} w_{k,i}
     \Big( \rho_\delta\big(\hat P_{t+k,i} - P_{t+k,i}\big)\, e^{-s_{k,i}} + s_{k,i} \Big)$\par}
@@ -176,12 +176,11 @@
 % 6. Data  1:15  (S4, Fig. 5)
 \begin{frame}{Data: re-annotating DROID in 3D}
   \centering
-  \paperfig{height=3.3cm}{figs/fig5a_annotation.pdf}{Fig.~5, top}
+  \paperfig{height=4.0cm}{figs/fig5a_annotation.pdf}{Fig.~5, top}
   \vfill
   \begin{notes}[0.86\linewidth]
-    \item DROID \src{khazatsky2024droid}: real teleoperation in hundreds of scenes, but its
-      sensor depth and camera poses are off
-    \item Three steps: depth from FoundationStereo \src{wen2025foundationstereo}, poses
+    \item DROID \src{khazatsky2024droid}: real teleoperation, but its depth and camera
+      poses are off. Three fixes: depth from FoundationStereo \src{wen2025foundationstereo}, poses
       from VGGT \src{wang2025vggt} refined against the robot mesh, CoTracker3
       \src{karaev2025cotracker3} tracks lifted to 3D
     \item \pw{Over 60\% of DROID survives, about 200 hours}. With BEHAVIOR-1K simulation
@@ -322,15 +321,13 @@
 % 13. Real robot  1:15  (Fig. 8, S5.4, App. real-robot details)
 \begin{frame}{Results: real robot, zero-shot}
   \centering
-  \includegraphics[height=2.5cm]{figs/fig8b_tasks.pdf}\\[1pt]
-  \includegraphics[width=0.66\linewidth]{figs/fig8a_success.pdf}
+  \includegraphics[height=2.7cm]{figs/fig8b_tasks.pdf}\\[1pt]
+  \includegraphics[width=0.86\linewidth]{figs/fig8a_success.pdf}
   \credit{Fig.~8}
   \vspace{2pt}
   \begin{notes}[0.9\linewidth]
-    \item 8 tasks, 10 trials each, one camera, and a fin-ray gripper the model never saw
-      in training. No demos, no finetuning
-    \item \pw{56\% overall (45 of 80)}, from 2 of 10 pushing a book to 9 of 10 closing a
-      drawer
+    \item 8 tasks $\times$ 10 trials, one camera, a gripper never seen in training, no demos
+      or finetuning: \pw{56\% overall (45 of 80)}
     \item Each plan runs without replanning; the deformable and tool tasks start with the object
       grasped. Videos: \href{https://point-world.github.io}{point-world.github.io}
   \end{notes}
