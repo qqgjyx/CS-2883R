@@ -1,6 +1,8 @@
 [submodule "2026-11-18_PRE"]
 	path = 2026-11-18_PRE
 	url = https://github.com/qqgjyx/overleaf_CS-2883R-pre
+	branch = main
 [submodule "2026-12-04_PRO"]
 	path = 2026-12-04_PRO
 	url = https://github.com/qqgjyx/CS-2883R-pro
+	branch = main
