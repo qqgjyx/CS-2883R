@@ -36,7 +36,7 @@ the project's code. Clone with `--recurse-submodules`; after work there, run
 | --- | --- | --- | --- |
 | **Wed 2026-09-16** | [RayZer](https://arxiv.org/abs/2505.00702) (arXiv 2505.00702) | 🤖 **AI Interrogator** | done, [`2026-09-16_rayzer/`](2026-09-16_rayzer/) |
 | **Wed 2026-10-14** | [MeanFlow](https://arxiv.org/abs/2505.13447) (arXiv 2505.13447) | 👾 **Hacker** | prep in [`2026-10-14_meanflow/`](2026-10-14_meanflow/) |
-| **Wed 2026-11-18** | [PointWorld](https://arxiv.org/abs/2601.03782) (arXiv 2601.03782) | 🧑‍🏫 **Presenter**, with Vivian Hui | draft in [`2026-11-18_PRE/`](2026-11-18_PRE/); switched from LAPA on 10 Nov |
+| **Wed 2026-11-18** | [PointWorld](https://arxiv.org/abs/2601.03782) (arXiv 2601.03782) | 🧑‍🏫 **Presenter**, with Vivian Hui | deck in [`2026-11-18_PRE/`](2026-11-18_PRE/); switched from LAPA on 10 Nov |
 
 ### Wed 18 Nov, 3:45pm: PointWorld Presenter, with Vivian Hui
 
@@ -45,10 +45,12 @@ Qianqian asked us on 10 Nov to present
 agreed. Same format: a shared 15-minute talk, then we lead the discussion and call on the roles.
 The paper is [`doc/13_PointWorld_2601.03782.pdf`](doc/13_PointWorld_2601.03782.pdf).
 
-Slides `main.tex`: 16 main frames plus 8 backups, the authors' own figures and tables, every
-number checked against the paper, a timing budget per frame (about 13:45 of 15:00) and a marked
-handoff after planning. Spoken as the first author, per the guidelines; our critique sits in the
-Discussion questions and the "Our reading" backup, for the reviewer and red-team roles.
+Slides `main.tex`: 30 main slides plus 10 backups, built on the authors' own figures and tables,
+with every number checked against the paper. Vivian presents sections 1 to 3 (slides 1 to 21,
+about 8 minutes) and Juntang sections 4 to 6 (slides 22 to 30, about 7 minutes). Each of
+Juntang's slides links to its backups from the footer, and each backup links back. Spoken as the
+first author, per the guidelines; our critique sits in the Discussion questions and the "Our
+reading" backup, for the reviewer and red-team roles.
 Build inside the folder with `latexmk -pdf main.tex`.
 
 The folder is a submodule of the private Overleaf-synced repo
@@ -60,8 +62,8 @@ is the tag `lapa-final` in that repo (paper:
 
 - [x] Read PointWorld, numbers checked against the PDF
 - [x] Slides: the authors' own figures and tables, a timing budget per frame
-- [ ] Split the talk with Vivian; the draft marks a handoff after planning
-- [ ] Make the slides ours: rewrite and cut where needed
+- [x] Split the talk: Vivian sections 1 to 3 (about 8 min), Juntang 4 to 6 (about 7 min)
+- [x] Make the slides ours: Vivian rebuilt her half; Juntang's restyled to match and audited
 - [ ] Roles and call order from the Ed post, out about a week and a half before class
 - [ ] Rehearse the 15 minutes together
 - [ ] Upload `Presenter` to the shared Drive folder before 3:45pm
