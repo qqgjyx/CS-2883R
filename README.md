@@ -45,9 +45,9 @@ Qianqian asked us on 10 Nov to present
 agreed. Same format: a shared 15-minute talk, then we lead the discussion and call on the roles.
 The paper is [`doc/13_PointWorld_2601.03782.pdf`](doc/13_PointWorld_2601.03782.pdf).
 
-Slides `main.tex`: 30 main slides plus 10 backups, built on the authors' own figures and tables,
-with every number checked against the paper. Vivian presents sections 1 to 3 (slides 1 to 21,
-about 8 minutes) and Juntang sections 4 to 6 (slides 22 to 30, about 7 minutes). Each of
+Slides `main.tex`: 33 main slides plus 9 backups, built on the authors' own figures and tables,
+with every number checked against the paper. Vivian presents sections 1 to 3 (slides 1 to 23,
+about 8 minutes) and Juntang sections 4 to 6 (slides 24 to 33, about 7:45). Each of
 Juntang's slides links to its backups from the footer, and each backup links back. Spoken as the
 first author, per the guidelines; our critique sits in the Discussion questions and the "Our
 reading" backup, for the reviewer and red-team roles.
@@ -62,10 +62,10 @@ is the tag `lapa-final` in that repo (paper:
 
 - [x] Read PointWorld, numbers checked against the PDF
 - [x] Slides: the authors' own figures and tables, a timing budget per frame
-- [x] Split the talk: Vivian sections 1 to 3 (about 8 min), Juntang 4 to 6 (about 7 min)
+- [x] Split the talk: Vivian sections 1 to 3 (about 8 min), Juntang 4 to 6 (about 7:45)
 - [x] Make the slides ours: Vivian rebuilt her half; Juntang's restyled to match and audited
 - [ ] Roles and call order from the Ed post, out about a week and a half before class
-- [ ] Rehearse the 15 minutes together
+- [x] Rehearse the 15 minutes together; time to spare, so "Why gripper points" went back in
 - [ ] Upload `Presenter` to the shared Drive folder before 3:45pm
 
 ### Wed 14 Oct, 3:45pm: MeanFlow Hacker
